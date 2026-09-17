@@ -188,10 +188,10 @@ Also out of scope: dark mode (documented stretch add, only after Phase 5 — nev
 
 | Area | Status |
 | :--- | :--- |
-| Baseline commit (auth/password fixes, login/register styling) | ✅ `097d389` |
+| Baseline commit (auth/password fixes, login/register styling) | ✅ `097d389` → folded into squash #5 |
 | Phase 0 analysis | ✅ |
 | INIT.md / DESIGN.md / AGENTS.md | ✅ |
-| P1 Foundations | ⏳ pending |
+| P1 Foundations | ✅ `01.1` #9 · `01.2` #11 · `01.3` #13 · `01.4` #15 · `01.5` #17 · `01.6` #19 · `01.7` smoke gate ✔ |
 | P2 Design system | pending |
 | P3 Citizen dashboard | pending |
 | P4 Admin & response migration | pending |
