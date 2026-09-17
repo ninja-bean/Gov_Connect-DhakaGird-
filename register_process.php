@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $check = $pdo->prepare("SELECT user_id FROM users WHERE email = ?");
         $check->execute([$email]);
         if ($check->rowCount() > 0) {
-            header("Location: /govconnect/register.php?error=" . urlencode("This email is already registered."));
+            header("Location: register.php?error=" . urlencode("This email is already registered."));
             exit;
         }
 
@@ -56,11 +56,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             ? "Response Team registered. Your account is Pending admin approval." 
             : "Registration successful! Please login.";
 
-        header("Location: /govconnect/register.php?success=" . urlencode($msg));
+        header("Location: register.php?success=" . urlencode($msg));
         exit;
 
     } catch (Exception $e) {
-        header("Location: /govconnect/register.php?error=" . urlencode("Error: ".$e->getMessage()));
+        header("Location: register.php?error=" . urlencode("Error: ".$e->getMessage()));
         exit;
     }
 }

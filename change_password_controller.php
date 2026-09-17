@@ -2,7 +2,7 @@
 session_start();
 require_once "db_connect.php";
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'user') {
+if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['user', 'response'])) {
     header("Location: login.php");
     exit();
 }
