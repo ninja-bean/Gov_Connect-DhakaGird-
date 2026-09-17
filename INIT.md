@@ -192,7 +192,7 @@ Also out of scope: dark mode (documented stretch add, only after Phase 5 — nev
 | Phase 0 analysis | ✅ |
 | INIT.md / DESIGN.md / AGENTS.md | ✅ |
 | P1 Foundations | ✅ `01.1` #9 · `01.2` #11 · `01.3` #13 · `01.4` #15 · `01.5` #17 · `01.6` #19 · `01.7` smoke gate ✔ |
-| P2 Design system | pending |
+| P2 Design system | ✅ tokens #23 · base #25 · components #27 · core.js #29 · inventory #31 |
 | P3 Citizen dashboard | pending |
 | P4 Admin & response migration | pending |
 | P5 Polish & docs | pending |
