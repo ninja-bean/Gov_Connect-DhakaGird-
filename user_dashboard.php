@@ -1,43 +1,15 @@
 <?php
-session_start();
-require_once "db_connect.php";
+
+use App\Core\Auth;
+
+require_once __DIR__ . '/bootstrap.php';
+require_once __DIR__ . '/db_connect.php';
 
 // --- Authentication ---
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'user') {
-    header("Location: login.php");
-    exit();
-}
-$user_id = $_SESSION['user_id'];
-$user_name = $_SESSION['name'] ?? 'Citizen';
+Auth::requireRole('user');
 
-// --- HANDLE SOS SUBMISSION (REAL GPS) ---
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'sos') {
-    header('Content-Type: application/json');
-    try {
-        $lat = floatval($_POST['lat'] ?? 0);
-        $lng = floatval($_POST['lng'] ?? 0);
-        
-        if(empty($lat) || empty($lng)) {
-            throw new Exception("GPS location required.");
-        }
-
-        $stmt = $pdo->prepare("INSERT INTO problems (user_id, category, description, latitude, longitude, status, priority, created_at) VALUES (?, 'SOS', 'EMERGENCY SOS ALERT - Immediate assistance required', ?, ?, 'pending', 'high', NOW())");
-        $stmt->execute([$user_id, $lat, $lng]);
-        
-        // Log in logs table if exists
-        try {
-            $logStmt = $pdo->prepare("INSERT INTO logs (problem_id, user_id, notification_type, message, created_at) VALUES (LAST_INSERT_ID(), ?, 'SOS', 'Emergency SOS alert triggered', NOW())");
-            $logStmt->execute([$user_id]);
-        } catch(Exception $e) {}
-        
-        echo json_encode(['status' => 'success']);
-        exit;
-    } catch (Exception $e) {
-        http_response_code(500);
-        echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
-        exit;
-    }
-}
+$user_id = (int) Auth::id();
+$user_name = Auth::name() ?? 'Citizen';
 
 // --- FETCH PROFILE PIC ---
 $user_pic = null;
@@ -66,17 +38,18 @@ try {
     $reports = $reportsStmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Calculate Stats from ALL reports
-    $fullStmt = $pdo->prepare("SELECT category, status FROM problems WHERE user_id = ?");
+    $fullStmt = $pdo->prepare("SELECT category, status, priority FROM problems WHERE user_id = ?");
     $fullStmt->execute([$user_id]);
     $all = $fullStmt->fetchAll(PDO::FETCH_ASSOC);
 
     foreach ($all as $r) {
         $stats['total']++;
         $cat = strtolower($r['category']);
+        $pri = strtolower($r['priority'] ?? '');
         $status = strtolower($r['status']);
 
         // Count SOS
-        if ($cat === 'sos') {
+        if ($pri === 'sos') {
             $stats['sos']++;
         }
         
@@ -88,14 +61,14 @@ try {
             $total_xp += 10;
         }
         
-        // Chart Data - using lowercase for comparison
+        // Chart Data
         if($cat === 'traffic') {
             $chartData[0]++;
         } elseif($cat === 'water') {
             $chartData[1]++;
         } elseif($cat === 'waste') {
             $chartData[2]++;
-        } elseif($cat === 'sos') {
+        } elseif($pri === 'sos') {
             $chartData[3]++;
         } else {
             $chartData[4]++;
@@ -109,7 +82,7 @@ try {
 $mapReports = [];
 try {
     $mapStmt = $pdo->prepare("
-        SELECT latitude, longitude, category, status, created_at 
+        SELECT latitude, longitude, category, priority, status, created_at 
         FROM problems 
         WHERE latitude IS NOT NULL 
         AND longitude IS NOT NULL
@@ -148,7 +121,7 @@ try {
     $ticker_news[] = "⚡ " . $pendingCount . " reports pending verification citywide";
     
     // Add active SOS alerts
-    $sosStmt = $pdo->query("SELECT COUNT(*) as cnt FROM problems WHERE category = 'SOS' AND status = 'pending' AND created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)");
+    $sosStmt = $pdo->query("SELECT COUNT(*) as cnt FROM problems WHERE priority = 'sos' AND status = 'pending' AND created_at >= DATE_SUB(NOW(), INTERVAL 24 HOUR)");
     $activeSOS = $sosStmt->fetch(PDO::FETCH_ASSOC)['cnt'];
     if ($activeSOS > 0) {
         $ticker_news[] = "🚨 " . $activeSOS . " active emergency alerts in last 24 hours";
@@ -428,7 +401,7 @@ if (!$gov_notice) {
                             <div style="padding: 25px; text-align: center; color: var(--text-muted);">No recent reports.</div>
                         <?php else: ?>
                             <?php foreach ($reports as $r): 
-                                $isSOS = (strtoupper($r['category']) == 'SOS');
+                                $isSOS = (strtolower($r['priority'] ?? '') === 'sos');
                             ?>
                             <div class="table-row" style="<?= $isSOS ? 'background: #FEF2F2;' : '' ?>">
                                 <div>
@@ -616,7 +589,7 @@ if (!$gov_notice) {
         L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '' }).addTo(map);
 
         <?php foreach($mapReports as $r): if(!empty($r['latitude']) && !empty($r['longitude'])): 
-            $isSOS = (strtoupper($r['category']) === 'SOS');
+            $isSOS = (strtolower($r['priority'] ?? '') === 'sos');
         ?>
             L.circleMarker([<?= $r['latitude'] ?>, <?= $r['longitude'] ?>], {
                 radius: 8,
@@ -689,7 +662,7 @@ if (!$gov_notice) {
             formData.append('lat', lat);
             formData.append('lng', lng);
             
-            fetch('', { method: 'POST', body: formData })
+            fetch('process_submit_problem.php', { method: 'POST', body: formData })
             .then(r => r.json())
             .then(data => {
                 if(data.status === 'success') {
