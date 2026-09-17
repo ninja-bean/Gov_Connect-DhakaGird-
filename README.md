@@ -77,4 +77,4 @@ DhakaGrid is built with **Accountability** at its core. To prevent system misuse
 3.  **Map Access:** Ensure an active internet connection to load the **Leaflet JS** tiles and OpenStreetMap data.
 
 ---
-**Developed with 🏙️ by [Injabin](https://github.com/Injabin)**
+**Developed with 🏙️ by [Injabin](https://github.com/ninja-bean)**
