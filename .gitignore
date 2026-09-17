@@ -1,0 +1,21 @@
+# Composer / build
+/vendor/
+composer.phar
+composer.lock.install
+*.log
+
+# Local config & env (credentials never committed)
+/.env
+/config/env.local.php
+
+# Uploaded user content
+/uploads/
+/profile_pics/
+/problems/
+
+# OS / editor junk
+Thumbs.db
+.DS_Store
+*.code-workspace
+.vscode/
+.idea/
