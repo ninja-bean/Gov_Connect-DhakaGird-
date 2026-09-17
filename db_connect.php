@@ -1,14 +1,24 @@
 <?php
+
+declare(strict_types=1);
+
 // db_connect.php
-// Put this file in the project root (same folder as your other php files)
+// Database bootstrap: credentials come from the gitignored .env via App\Core\Config.
+// Put this file in the project root (same folder as your other php files).
 
-$host = "127.0.0.1";
-$db   = "g1";
-$user = "root";
-$pass = "#Sifat10919"; // your MySQL password
-$charset = "utf8mb4";
+use App\Core\Config;
 
-$dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+require_once __DIR__ . '/vendor/autoload.php';
+
+$db = Config::db();
+
+$dsn = sprintf(
+    'mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4',
+    $db['host'],
+    $db['port'],
+    $db['name']
+);
+
 $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -16,7 +26,7 @@ $options = [
 ];
 
 try {
-    $pdo = new PDO($dsn, $user, $pass, $options);
+    $pdo = new PDO($dsn, $db['user'], $db['pass'], $options);
 } catch (PDOException $e) {
     // In dev you can show error; in production log instead.
     die("Database connection failed: " . $e->getMessage());
