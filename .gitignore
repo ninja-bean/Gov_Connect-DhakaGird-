@@ -13,6 +13,9 @@ composer.lock.install
 /profile_pics/
 /problems/
 
+# Stray media
+*.mp4
+
 # OS / editor junk
 Thumbs.db
 .DS_Store
