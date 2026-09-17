@@ -4,6 +4,9 @@ composer.phar
 composer.lock.install
 *.log
 
+# PHPUnit
+.phpunit.cache/
+
 # Local config & env (credentials never committed)
 /.env
 /config/env.local.php
