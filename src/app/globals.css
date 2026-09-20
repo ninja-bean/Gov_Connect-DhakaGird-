@@ -960,6 +960,169 @@
   margin-top: 6px;
 }
 
+/* -- register card (1:1 parity with legacy register.php) ----------------- */
+/* Solid white card scaled 0.82, distinct from the login glass card. */
+.auth-reg-card {
+  position: relative;
+  z-index: 10;
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  animation: authRegSlideUp 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: scale(0.82);
+}
+
+@keyframes authRegSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px) scale(0.78);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(0.82);
+  }
+}
+
+.auth-reg-head {
+  padding: 32px 40px 24px;
+  text-align: center;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.auth-reg-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 6px;
+  letter-spacing: -0.5px;
+}
+
+.auth-reg-subtitle {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.auth-reg-body {
+  padding: 32px 40px 40px;
+}
+
+.auth-reg-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.auth-reg-input,
+.auth-reg-select {
+  width: 100%;
+  padding: 13px 16px;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 0.92rem;
+  font-family: inherit;
+  transition: all 0.2s;
+}
+
+.auth-reg-input:focus,
+.auth-reg-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.auth-reg-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748B' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+}
+
+.auth-reg-select option {
+  background: #ffffff;
+  color: #0f172a;
+}
+
+.auth-reg-select option:checked {
+  background: #dbeafe;
+  color: #0f172a;
+}
+
+/* Native widget consistency (date picker, number spinners, autofill) */
+.auth-reg-input[type="date"]::-webkit-calendar-picker-indicator {
+  background: transparent
+    url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAyNCAyNCcgZmlsbD0nbm9uZScgc3Ryb2tlPSclMjM2NDc0OEInIHN0cm9rZS13aWR0aD0nMicgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJz48cmVjdCB4PSczJyB5PSc0JyB3aWR0aD0nMTgnIGhlaWdodD0nMTgnIHJ4PSczJy8+PHBhdGggZD0nTTE2IDJ2NE04IDJ2NE0zIDEwaDE4Jy8+PC9zdmc+")
+    no-repeat center center;
+  background-size: 16px 16px;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  opacity: 1;
+  transition: background-color 0.2s;
+}
+
+.auth-reg-input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  background-color: rgba(59, 130, 246, 0.12);
+}
+
+.auth-reg-input[type="date"]:not(:valid)::-webkit-datetime-edit {
+  color: #94a3b8;
+}
+
+.auth-reg-input[type="number"]::-webkit-inner-spin-button,
+.auth-reg-input[type="number"]::-webkit-outer-spin-button {
+  border-radius: 6px;
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+.auth-reg-input:-webkit-autofill,
+.auth-reg-input:-webkit-autofill:hover,
+.auth-reg-input:-webkit-autofill:focus,
+.auth-reg-select:-webkit-autofill {
+  -webkit-text-fill-color: #0f172a;
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset;
+  transition: background-color 600000s 0s;
+}
+
+.auth-reg-footer {
+  text-align: center;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.auth-reg-footer a {
+  color: #3b82f6;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-reg-footer a:hover {
+  color: #2563eb;
+}
+
+@media (max-width: 640px) {
+  .auth-reg-head,
+  .auth-reg-body {
+    padding: 24px 20px;
+  }
+
+  .auth-reg-title {
+    font-size: 1.25rem;
+  }
+}
+
 @media (max-width: 768px) {
   .auth-card {
     padding: 28px 22px;
