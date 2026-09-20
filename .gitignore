@@ -1,28 +1,30 @@
-# ---- Local configuration & secrets ----
-# Real DB credentials live only on the machine; never commit them.
-db_connect.php
+# ---- Dependencies ----
+/node_modules
+
+# ---- Next.js build output & env ----
+/.next
+/out
+.vercel
+
 .env
-*.local.php
+.env*.local
+.env.production
+.env.development
 
-# ---- Scratch generated files ----
-generate_hash.php
-tempCodeRunnerFile.php
+# ---- TypeScript ----
+*.tsbuildinfo
 
-# ---- Media / large binaries ----
-*.mp4
-*.mov
-*.wmv
-*.avi
-*.zip
-*.rar
-
-# ---- IDE / OS clutter ----
-.idea/
-.vscode/
+# ---- OS / IDE clutter ----
 .DS_Store
 Thumbs.db
 *.log
+.idea/
+.vscode/
 
-# ---- Runtime uploads ----
-uploads/
-media/
+# ---- Runtime storage / uploads ----
+/storage
+/media
+
+# ---- Local-only PHP config remnants (never commit real credentials) ----
+*.local.php
+/src/generated/prisma

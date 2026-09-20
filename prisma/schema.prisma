@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model deleted_problems {
+  del_id      Int      @id @default(autoincrement()) @db.UnsignedInt
+  problem_id  Int?     @db.UnsignedInt
+  user_id     Int?     @db.UnsignedInt
+  user_name   String?  @db.VarChar(100)
+  user_email  String?  @db.VarChar(150)
+  user_phone  String?  @db.VarChar(50)
+  category    String?  @db.VarChar(50)
+  description String?  @db.Text
+  suggestion  String?  @db.VarChar(255)
+  location    String?  @db.VarChar(255)
+  status      String?  @db.VarChar(50)
+  priority    String?  @db.VarChar(50)
+  report      String?  @db.Text
+  deleted_at  DateTime @default(now()) @db.Timestamp(0)
+}
+
+model feedbacks {
+  feedback_id Int      @id @default(autoincrement()) @db.UnsignedInt
+  problem_id  Int      @db.UnsignedInt
+  user_id     Int      @db.UnsignedInt
+  rating      Int      @db.TinyInt
+  comment     String?  @db.Text
+  created_at  DateTime @default(now()) @db.Timestamp(0)
+  problems    problems @relation(fields: [problem_id], references: [problem_id], onDelete: Cascade, onUpdate: Restrict, map: "fk_feedback_problem")
+  users       users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Restrict, map: "fk_feedback_user")
+
+  @@index([problem_id], map: "fk_feedback_problem")
+  @@index([user_id], map: "fk_feedback_user")
+}
+
+model logs {
+  id                Int      @id @default(autoincrement()) @db.UnsignedInt
+  problem_id        Int?     @db.UnsignedInt
+  user_id           Int?     @db.UnsignedInt
+  notification_type String?  @db.VarChar(50)
+  message           String?  @db.Text
+  created_at        DateTime @default(now()) @db.Timestamp(0)
+}
+
+model problems {
+  problem_id       Int         @id @default(autoincrement()) @db.UnsignedInt
+  user_id          Int         @db.UnsignedInt
+  category         String      @default("other") @db.VarChar(50)
+  description      String?     @db.Text
+  suggestion       String?     @db.VarChar(255)
+  location         String?     @db.VarChar(255)
+  location_name    String?     @db.VarChar(255)
+  latitude         Decimal?    @db.Decimal(10, 7)
+  longitude        Decimal?    @db.Decimal(10, 7)
+  status           String      @default("pending") @db.VarChar(50)
+  priority         String      @default("medium") @db.VarChar(50)
+  assigned_to      Int?        @db.UnsignedInt
+  working_members  Int         @default(0)
+  report           String?     @db.Text
+  media_path       String?     @db.VarChar(255)
+  deleted_by_admin Boolean     @default(false)
+  created_at       DateTime    @default(now()) @db.Timestamp(0)
+  updated_at       DateTime    @default(now()) @db.Timestamp(0)
+  feedbacks        feedbacks[]
+  users            users       @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Restrict, map: "fk_problems_user")
+
+  @@index([user_id], map: "fk_problems_user")
+}
+
+model unban_requests {
+  id             Int                   @id @default(autoincrement()) @db.UnsignedInt
+  user_id        Int                   @db.UnsignedInt
+  reason         String?               @db.Text
+  message        String?               @db.Text
+  status         unban_requests_status @default(pending)
+  created_at     DateTime              @default(now()) @db.Timestamp(0)
+  reviewed_at    DateTime?             @db.DateTime(0)
+  admin_response String?               @db.Text
+  users          users                 @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: Restrict, map: "fk_unban_user")
+
+  @@index([user_id], map: "fk_unban_user")
+}
+
+model users {
+  user_id         Int              @id @default(autoincrement()) @db.UnsignedInt
+  name            String           @db.VarChar(120)
+  email           String           @unique(map: "uq_users_email") @db.VarChar(150)
+  phone           String?          @db.VarChar(50)
+  nid             String?          @db.VarChar(50)
+  dob             DateTime?        @db.Date
+  location        String?          @db.VarChar(255)
+  latitude        Decimal?         @db.Decimal(10, 7)
+  longitude       Decimal?         @db.Decimal(10, 7)
+  password        String           @db.VarChar(255)
+  role            users_role       @default(user)
+  status          users_status     @default(active)
+  category        String?          @db.VarChar(50)
+  incharge_name   String?          @db.VarChar(120)
+  incharge_id     String?          @db.VarChar(50)
+  incharge_email  String?          @db.VarChar(150)
+  incharge_phone  String?          @db.VarChar(50)
+  identification  String?          @db.VarChar(255)
+  employee_number String?          @db.VarChar(50)
+  total_members   Int              @default(0)
+  busy_members    Int              @default(0)
+  is_banned       Boolean          @default(false)
+  ban_until       String?          @db.VarChar(50)
+  profile_pic     String?          @db.VarChar(255)
+  created_at      DateTime         @default(now()) @db.Timestamp(0)
+  feedbacks       feedbacks[]
+  problems        problems[]
+  unban_requests  unban_requests[]
+}
+
+model warnings {
+  id         Int      @id @default(autoincrement()) @db.UnsignedInt
+  user_id    Int?     @db.UnsignedInt
+  admin_id   Int?     @db.UnsignedInt
+  message    String?  @db.Text
+  created_at DateTime @default(now()) @db.Timestamp(0)
+}
+
+enum unban_requests_status {
+  pending
+  reviewed
+  approved
+  rejected
+}
+
+enum users_role {
+  user
+  response
+  admin
+}
+
+enum users_status {
+  pending
+  active
+  rejected
+}

@@ -1,0 +1,28 @@
+# ---- Local configuration & secrets ----
+# Real DB credentials live only on the machine; never commit them.
+db_connect.php
+.env
+*.local.php
+
+# ---- Scratch generated files ----
+generate_hash.php
+tempCodeRunnerFile.php
+
+# ---- Media / large binaries ----
+*.mp4
+*.mov
+*.wmv
+*.avi
+*.zip
+*.rar
+
+# ---- IDE / OS clutter ----
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.log
+
+# ---- Runtime uploads ----
+uploads/
+media/

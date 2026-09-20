@@ -1,80 +1,134 @@
-# 🏙️ DhakaGrid (formerly GovConnect)
+# GovConnect – DhakaGrid
 
-**A high-performance City Management & Emergency Response Ecosystem.**
+A citizen-centric civic platform that connects people with local government: citizens
+file infrastructure complaints, request help, and track how authorities respond.
+Authorities verify reports, assign them to response teams, and resolve them — end to end.
 
-DhakaGrid is a full-stack web application designed to bridge the communication gap between citizens and emergency services. Originally conceived as *GovConnect*, the project has evolved into a modern, gamified portal where citizens can report crises, use one-click SOS features, and track city-wide incidents via real-time geospatial data.
+This repository is the **Next.js 16 (App Router) rewrite** of the original PHP application,
+built with production-grade engineering practices: typed server actions, Prisma ORM over a
+MySQL schema, JWT session auth, proxy-level rate limiting, a full audit trail, security
+headers with a strict CSP, dark mode, an automated test suite, and CI on every push.
 
----
-
-## 🚀 The Core Experience
-
-### 📍 Intelligent Geospatial Reporting
-* **Leaflet JS Integration:** Real-time interactive mapping for incident localized reporting.
-* **Map-to-Address Logic:** Users can set their profile address or report incident locations simply by clicking a point on the map—automatically fetching precise coordinates.
-* **Visual Evidence:** Support for multimedia uploads (photos/documents) during problem submission to provide responders with immediate context.
-
-### 🚨 Emergency SOS System
-* **Flash Response:** A dedicated, high-priority SOS button that bypasses standard forms for instant department notification.
-* **Live Grid Map:** A centralized "Live Feed" showing pending city-wide reports and SOS alerts.
-
-### 🎮 Citizen Engagement (Gamification)
-* **XP & Ranking System:** Citizens earn experience points (XP) for verified reports, progressing from a "City Watcher" to a "Grid Guardian."
-* **Official Broadcasts:** A "Gov Notice" system for real-time city-wide announcements (e.g., maintenance outages).
+> The original application lives in [`legacy-php/`](legacy-php/). It is kept for parity
+> reference only and is excluded from linting, builds, and type checking.
 
 ---
 
-## 👥 Tri-Role Management System
+## Features
 
-| Role | Capabilities | Primary Interface |
-| :--- | :--- | :--- |
-| **Citizen** | SOS triggering, Map-based reporting, Photo uploads, Profile mapping, XP tracking. | DhakaGrid User Portal |
-| **Response Team** | View department-specific tickets (Fire, Police, Medical), access GPS coordinates, update resolution status. | Responder Dashboard |
-| **Admin** | Full system moderation, data analytics, **Penalty Issuance**, and **Lifetime User Bans**. | GovConnect Admin Console |
+| Area | Highlights |
+| --- | --- |
+| **Citizen flow** | Submit reports (category, description, location via map picker or GPS, photos), emergency SOS alerts, live grid map, response tracking with status badges, feedback with ratings, unban appeals, city-watch XP levels. |
+| **Response teams** | Team dashboard for assigned problems, in-progress / resolved workflow, team profile management. |
+| **Admin** | Problem review, verify / reject / delete-with-archive, assign to teams with priority, team approvals, citizen ban & warnings, unban appeal handling, **CSV export** of all complaints, activity insights dashboard. |
+| **Account & auth** | Register / login, password change, profile editing, role-based access (citizen / response / admin), signed JWT session cookies (7 days). |
+| **UI / UX** | Class-based **dark mode** with token remapping, two-step confirm on destructive actions, reduced-motion support, WCAG-minded labels and focus states, consistent shared UI kit. |
+
+## Tech Stack
+
+- **Next.js 16** (App Router, Turbopack, React 19) — server components + server actions + route handlers
+- **Tailwind CSS v4** (CSS-first configuration, `@theme` design tokens)
+- **Prisma Client 6** over **MySQL 8** (generated client in `src/generated/prisma`)
+- **jose** (HS256 JWT sessions), **bcryptjs** (password hashing, cost 10)
+- **Zod 4** (validated server-action inputs)
+- **Leaflet + OpenStreetMap** (mapping), **Open-Meteo** (weather), **Nominatim** (reverse geocoding)
+- **Vitest 5 + Testing Library** (unit + component tests), **ESLint 9** (flat config), **GitHub Actions CI**
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 22+
+- MySQL 8 (this repo talks to an existing schema; see `prisma/schema.prisma`)
+
+### Setup
+
+```bash
+npm install        # runs `prisma generate` via postinstall
+cp .env.example .env
+```
+
+`.env` needs at minimum:
+
+```
+DATABASE_URL="mysql://USER:PASSWORD@127.0.0.1:3306/g1"
+AUTH_SECRET="a-long-random-string"
+```
+
+- `DATABASE_URL` — connection string for the MySQL database.
+- `AUTH_SECRET` — secret used to sign session JWTs. **Never commit a real value.**
+
+### Run
+
+```bash
+npm run dev            # development server (Turbopack)
+npm run build          # production build
+npm start              # production server
+```
+
+### Scripts
+
+| Script | Purpose |
+| --- | --- |
+| `npm run dev` | Next.js development server |
+| `npm run build` | Production build |
+| `npm start` | Production server |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run lint` / `lint:fix` | ESLint (flat config) |
+| `npm test` / `npm run test:run` | Vitest (watch / one-shot, **26 tests — 6 files**) |
+| `npm run prisma:generate` | Regenerate the Prisma client |
+| `npm run prisma:push` | Push `prisma/schema.prisma` to the DB |
+
+### Demo accounts
+
+| Role | Credentials |
+| --- | --- |
+| Admin | `admin@dhakagrid.gov` / `Admin@123` |
+| Citizen | `Rahim@…` / `User@123` |
+| Response team | `police@dhakagrid.gov` / `Team@123` |
 
 ---
 
-## 🛠️ Tech Stack
+## Project Structure
 
-| Layer | Technology |
-| :--- | :--- |
-| **Backend** | ![PHP](https://img.shields.io/badge/php-%23777BB4.svg?style=for-the-badge&logo=php&logoColor=white) ![MySQL](https://img.shields.io/badge/mysql-%2300f.svg?style=for-the-badge&logo=mysql&logoColor=white) |
-| **Frontend** | ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E) ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white) |
-| **Mapping** | ![Leaflet](https://img.shields.io/badge/Leaflet-199903?style=for-the-badge&logo=Leaflet&logoColor=white) |
-| **Moderation** | Custom Logic for Penalties, Data Logging, and Account Suspension. |
+```
+src/
+├── proxy.ts                  # Next 16 proxy: auth redirects + login/register rate limiting
+├── app/                      # App Router
+│   ├── layout.tsx            # Root layout: fonts, theme provider, no-FOUC theme script
+│   ├── globals.css           # Tailwind v4 tokens, dark theme remapping, reduced motion
+│   ├── api/                  # Route handlers
+│   │   ├── health/           #   GET /api/health — DB probe, uptime, version
+│   │   └── admin/export/     #   GET /api/admin/export/problems — admin-only CSV export
+│   ├── (marketing) page.tsx  # Landing page
+│   ├── login|register|forgot-password/
+│   ├── dashboard|report|my-problems|appeal|profile/
+│   ├── admin/                # problems, teams, users, appeals, dashboard
+│   └── response/             # dashboard, profile
+├── actions/                  # Server actions (typed, Zod-validated) — auth, admin, problems, response, profile
+├── components/               # Shared UI kit + feature components (theme, confirm, maps, doughnut, …)
+├── lib/                      # Auth (session, guards, routes, password policy), audit log, csv, db, env, problems
+├── generated/prisma/         # Generated Prisma client (do not edit)
+```
 
----
+The existing database schema is documented in detail in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
-## 📸 Interface Preview
+## Engineering Highlights
 
-### Modernized Login & Role Selection
-> [!TIP]
-> The login interface now supports tab-based role switching for a seamless UX between Citizens, Responders, and Admins.
+- **Security-first** — bcrypt (cost 10) password hashing with an enforced password policy,
+  HS256-signed JWT session cookies, `SameSite` session handling, role-guarded routes and
+  server actions, proxy-level sliding-window rate limiting on `/login` (8/min/IP) and
+  `/register` (4/min/IP), a best-effort **audit trail** for every meaningful action, and
+  response headers including a strict Content-Security-Policy.
+- **Quality gates** — ESLint (0 errors / 0 warnings), `tsc` type checking, 26 Vitest tests,
+  and a production build all run in CI for every push (`.github/workflows/ci.yml`).
+- **Accessible + pleasant UI** — dark mode with WCAG-conscious contrast, two-step confirm
+  buttons for destructive admin actions (no surprise deletes), `prefers-reduced-motion`
+  support, keyboard-visible focus states, and descriptive `aria` labels.
+- **Operational visibility** — `/api/health` returns service + database status, uptime, and
+  version; admins can download every complaint as a properly escaped CSV (BOM for Excel,
+  formula-injection guards).
 
-| User Dashboard (DhakaGrid) | Admin Control Center |
-| :---: | :---: |
-| ![User Dashboard](ss/s2.jpg) | ![Admin Dashboard](ss/s4.jpg) |
+## License
 
----
-| Login (DhakaGrid) | Problem Report Option |
-| :---: | :---: |
-| ![login](ss/s1.jpg) | ![Problem submit](ss/s3.jpg) |
-
----
-
-## 🛡️ Moderation & System Integrity
-
-DhakaGrid is built with **Accountability** at its core. To prevent system misuse:
-* **Data Persistence:** Every report and SOS trigger is logged with a timestamp and user ID.
-* **Penalty Logic:** Admins can flag specific users for "False Reporting."
-* **Moderation Console:** Includes the ability to issue **Life-time Bans**, blocking the user's credentials from accessing the Grid entirely.
-
----
-
-## ⚙️ Setup Instructions
-
-1.  **Database:** Import `dhakagrid.sql` (or `gov_connect.sql`) into your MySQL server.
-2.  **Configuration:** Update the `db_connection.php` file with your local database credentials.
-3.  **Map Access:** Ensure an active internet connection to load the **Leaflet JS** tiles and OpenStreetMap data.
-
----
-**Developed with 🏙️ by [Injabin](https://github.com/Injabin)**
+Academic project. See the paper/report in `docs/` for the original design description.
