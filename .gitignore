@@ -27,3 +27,4 @@ Thumbs.db
 
 # ---- Local-only PHP config remnants (never commit real credentials) ----
 *.local.php
+/src/generated/prisma

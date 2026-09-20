@@ -1,0 +1,28 @@
+# GovConnect database — offers a containerized MySQL for running the app
+# without XAMPP or a local MySQL service.
+#
+#   docker compose up -d
+#
+# Mirrors the legacy schema (db g1). The application then points DATABASE_URL
+# at the container, e.g. mysql://root:CHANGE_ME@127.0.0.1:3306/g1
+
+services:
+  db:
+    image: mysql:8.4
+    container_name: govconnect-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: g1
+      MYSQL_ROOT_PASSWORD: CHANGE_ME
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-pCHANGE_ME"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_data:
