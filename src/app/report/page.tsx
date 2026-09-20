@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { db } from "@/lib/db";
 import { requireRole } from "@/lib/auth/guards";
 import { isCurrentlyBanned } from "@/lib/problems";
 import CitizenNav from "@/components/citizen-nav";
+import { Container, PageHeader } from "@/components/ui/page-header";
+import { Card, CardBody } from "@/components/ui/card";
+import { ButtonLink } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import ReportForm from "./report-form";
 
 export const metadata: Metadata = { title: "Submit Report | GovConnect" };
@@ -15,35 +18,40 @@ export default async function ReportPage() {
     select: { is_banned: true, ban_until: true },
   });
 
+  const banned = isCurrentlyBanned(user);
+
   return (
     <div className="min-h-screen bg-slate-50">
       <CitizenNav />
-      <main className="mx-auto max-w-3xl px-6 py-8">
-        <div className="rounded-2xl border border-slate-200 bg-white">
-          <div className="border-b border-slate-200 p-6">
-            <h1 className="text-xl font-bold text-slate-900">
-              {isCurrentlyBanned(user) ? "Account Restricted" : "Submit New Problem"}
-            </h1>
-          </div>
-          <div className="p-6">
-            {isCurrentlyBanned(user) ? (
-              <div className="rounded-xl border-2 border-red-300 bg-red-50 p-8 text-center">
-                <p className="text-lg font-bold text-red-800">Your account has been restricted.</p>
-                <p className="mt-2 text-sm text-red-700">
-                  You cannot submit new reports while your account is banned.
-                </p>
-                <Link
-                  href="/appeal"
-                  className="mt-5 inline-block rounded-lg bg-red-600 px-6 py-2.5 font-semibold text-white"
-                >
-                  Lodge an appeal
-                </Link>
-              </div>
-            ) : (
-              <ReportForm />
-            )}
-          </div>
-        </div>
+      <main className="py-8">
+        <Container className="max-w-3xl">
+          <PageHeader
+            title={banned ? "Account Restricted" : "Submit New Problem"}
+            description={
+              banned
+                ? "Your account is currently restricted."
+                : "Report a problem in your area and track it until it is resolved."
+            }
+          />
+          <Card className="mt-6">
+            <CardBody>
+              {banned ? (
+                <EmptyState
+                  icon="🚫"
+                  title="Your account has been restricted."
+                  description="You cannot submit new reports while your account is banned."
+                  action={
+                    <ButtonLink href="/appeal" variant="danger">
+                      Lodge an appeal
+                    </ButtonLink>
+                  }
+                />
+              ) : (
+                <ReportForm />
+              )}
+            </CardBody>
+          </Card>
+        </Container>
       </main>
     </div>
   );

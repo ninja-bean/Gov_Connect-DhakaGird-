@@ -1,24 +1,26 @@
 import type { Metadata } from "next";
-import { requireRole } from "@/lib/auth/guards";
-import CitizenNav from "@/components/citizen-nav";
+import { requireSession } from "@/lib/auth/guards";
+import RoleNav from "@/components/role-nav";
+import { Container, PageHeader } from "@/components/ui/page-header";
+import { Card, CardBody } from "@/components/ui/card";
 import ChangePasswordForm from "./change-password-form";
 
 export const metadata: Metadata = { title: "Change Password | GovConnect" };
 
 export default async function ChangePasswordPage() {
-  await requireRole("user");
+  const session = await requireSession();
   return (
     <div className="min-h-screen bg-slate-50">
-      <CitizenNav />
-      <main className="mx-auto max-w-lg px-6 py-8">
-        <div className="rounded-2xl border border-slate-200 bg-white">
-          <div className="border-b border-slate-200 p-6">
-            <h1 className="text-xl font-bold text-slate-900">Change password</h1>
-          </div>
-          <div className="p-6">
-            <ChangePasswordForm />
-          </div>
-        </div>
+      <RoleNav role={session.role} />
+      <main className="py-8">
+        <Container className="max-w-lg">
+          <PageHeader title="Change password" description="Use a strong password you don't reuse elsewhere." />
+          <Card className="mt-6">
+            <CardBody>
+              <ChangePasswordForm />
+            </CardBody>
+          </Card>
+        </Container>
       </main>
     </div>
   );
