@@ -8,11 +8,12 @@ import { requireSession } from "@/lib/auth/guards";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { homePathFor } from "@/lib/auth/routes";
 import type { Role } from "@/lib/auth/session-core";
+import {
+  fieldErrors,
+  type ActionState,
+} from "@/lib/action-state";
 
-export type ActionState = {
-  message?: string;
-  errors?: Record<string, string[]>;
-} | null;
+export type { ActionState };
 
 const loginSchema = z.object({
   email: z.email({ error: "Please enter a valid email." }).trim(),
@@ -36,16 +37,6 @@ const registerSchema = z
     message: "Passwords do not match.",
     path: ["confirmPassword"],
   });
-
-function fieldErrors(formatted: {
-  fieldErrors: Record<string, string[]>;
-  formErrors: string[];
-}): Record<string, string[]> {
-  if (formatted.formErrors.length > 0) {
-    return { _form: formatted.formErrors };
-  }
-  return formatted.fieldErrors;
-}
 
 export async function login(
   _prevState: ActionState,
