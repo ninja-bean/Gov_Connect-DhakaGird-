@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import Image from "next/image";
 import { updateTeamProfile, type TeamActionState } from "@/actions/response";
 import LocationPicker from "@/components/location-picker";
 import { Alert } from "@/components/ui/alert";
@@ -87,16 +88,21 @@ export default function ResponseTeamProfileForm({
       >
         <div className="flex items-center gap-3">
           {profilePic && (
-            <img
+            <Image
               src={`/uploads/profile_pics/${profilePic}`}
-              alt="Current"
+              alt="Current profile picture"
+              width={40}
+              height={40}
               className="size-10 rounded-full border border-slate-200 object-cover"
             />
           )}
           {preview && (
-            <img
+            <Image
               src={preview}
-              alt="Preview"
+              alt="New profile picture preview"
+              width={40}
+              height={40}
+              unoptimized
               className="size-10 rounded-full border border-slate-200 object-cover"
             />
           )}
@@ -105,7 +111,7 @@ export default function ResponseTeamProfileForm({
             name="profilePic"
             type="file"
             accept="image/jpeg,image/png,image/webp"
-            className="block w-full text-sm text-slate-500 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-900 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
+            className="block w-full text-sm text-slate-500 file:mr-3 file:rounded-lg file:border-0 file:bg-ink file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
             onChange={(e) => {
               const f = e.target.files?.[0];
               if (!f) return;
@@ -126,7 +132,7 @@ export default function ResponseTeamProfileForm({
       <button
         type="submit"
         disabled={pending}
-        className="rounded-lg bg-slate-900 px-6 py-3 text-sm font-bold text-white transition hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:opacity-60"
+        className="rounded-lg bg-ink px-6 py-3 text-sm font-bold text-white transition hover:bg-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:opacity-60"
       >
         {pending ? "Saving…" : "Save profile"}
       </button>

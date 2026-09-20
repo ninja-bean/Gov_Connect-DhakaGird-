@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { requireRole } from "@/lib/auth/guards";
 import CitizenNav from "@/components/citizen-nav";
 import { db } from "@/lib/db";
@@ -28,9 +29,11 @@ export default async function ProfilePage() {
               <div className="mb-6 flex flex-wrap items-center gap-5">
                 <div className="flex size-24 items-center justify-center overflow-hidden rounded-full border-4 border-slate-200 bg-slate-100 text-3xl">
                   {user.profile_pic ? (
-                    <img
+                    <Image
                       src={`/uploads/profile_pics/${user.profile_pic}`}
                       alt={`${user.name}'s avatar`}
+                      width={96}
+                      height={96}
                       className="h-full w-full object-cover"
                     />
                   ) : (

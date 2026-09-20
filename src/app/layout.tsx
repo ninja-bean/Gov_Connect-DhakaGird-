@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
+
+const THEME_STORAGE_KEY = "govconnect-theme";
+
+const noFlashScript = `try{var t=localStorage.getItem("${THEME_STORAGE_KEY}");if(t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches)){document.documentElement.classList.add("dark")}}catch(e){}`;
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -18,9 +23,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={poppins.variable}>
+    <html lang="en" className={poppins.variable} suppressHydrationWarning>
       <body className="antialiased" style={{ fontFamily: "var(--font-poppins), sans-serif" }}>
-        {children}
+        <script dangerouslySetInnerHTML={{ __html: noFlashScript }} />
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

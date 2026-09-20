@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { db } from "@/lib/db";
 import { requireRole } from "@/lib/auth/guards";
 import { isCurrentlyBanned, SOS_CATEGORY } from "@/lib/problems";
@@ -164,7 +165,7 @@ export default async function CitizenDashboard() {
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             <Link
               href="/report"
-              className="flex items-center justify-center gap-2 rounded-xl border-2 border-slate-900 bg-white px-6 py-4 text-base font-bold text-slate-900 transition hover:bg-slate-900 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+              className="flex items-center justify-center gap-2 rounded-xl border-2 border-slate-900 bg-white px-6 py-4 text-base font-bold text-slate-900 transition hover:bg-ink hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
             >
               ✏️ Submit Report
             </Link>
@@ -236,11 +237,13 @@ export default async function CitizenDashboard() {
               <Card>
                 <CardBody>
                   <div className="flex items-center gap-4">
-                    <div className="flex size-16 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 to-slate-600 text-2xl text-white">
+                    <div className="flex size-16 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-ink to-ink-fade text-2xl text-white">
                       {user.profile_pic ? (
-                        <img
+                        <Image
                           src={`/uploads/profile_pics/${user.profile_pic}`}
                           alt={`${user.name}'s avatar`}
+                          width={64}
+                          height={64}
                           className="h-full w-full object-cover"
                         />
                       ) : (

@@ -38,7 +38,7 @@ function initials(name: string) {
 export default function Home() {
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
-      <section className="flex min-h-screen items-center justify-center bg-slate-900 px-6">
+      <section className="flex min-h-screen items-center justify-center bg-ink px-6">
         <div className="max-w-xl text-center text-white">
           <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
             Welcome to GovConnect
@@ -94,7 +94,7 @@ export default function Home() {
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {team.map((member) => (
               <div key={member.name} className="rounded-2xl border border-slate-200 bg-slate-50 p-6 text-center shadow-sm">
-                <div className="mx-auto flex size-24 items-center justify-center rounded-full bg-gradient-to-br from-slate-900 to-slate-600 text-2xl font-bold text-white">
+                <div className="mx-auto flex size-24 items-center justify-center rounded-full bg-gradient-to-br from-ink to-ink-fade text-2xl font-bold text-white">
                   {initials(member.name)}
                 </div>
                 <h3 className="mt-4 font-bold">{member.name}</h3>
@@ -106,7 +106,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="bg-slate-900 py-8 text-center text-sm text-slate-300">
+      <footer className="bg-ink py-8 text-center text-sm text-slate-300">
         &copy; {new Date().getFullYear()} GovConnect — Built with ❤️ by the GovConnect Team.
       </footer>
     </main>

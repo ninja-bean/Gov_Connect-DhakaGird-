@@ -94,7 +94,7 @@ export default function ReportForm() {
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-xl bg-slate-900 px-6 py-4 text-base font-bold text-white transition hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:opacity-60"
+        className="w-full rounded-xl bg-ink px-6 py-4 text-base font-bold text-white transition hover:bg-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900 disabled:opacity-60"
       >
         {pending ? "Submitting…" : "Submit Report"}
       </button>

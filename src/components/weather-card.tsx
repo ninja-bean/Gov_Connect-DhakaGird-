@@ -40,7 +40,7 @@ export default async function WeatherCard() {
   }
 
   return (
-    <div className="flex items-center justify-between gap-3 rounded-2xl bg-slate-900 p-5 text-white shadow-sm">
+    <div className="flex items-center justify-between gap-3 rounded-2xl bg-ink p-5 text-white shadow-sm">
       <div>
         <p className="text-3xl font-extrabold leading-none">{temp === null ? "--°C" : `${temp}°C`}</p>
         <p className="mt-2 text-sm font-medium text-slate-400">Dhaka</p>

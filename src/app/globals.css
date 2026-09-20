@@ -1,5 +1,68 @@
 @import "tailwindcss";
 
+/* Class-based dark mode: add `.dark` to <html>. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Serialized design tokens --------------------------------------------------------------------
+   The Tailwind neutral scale is remapped onto these tokens (see @theme inline below), so the
+   whole interface follows the active theme without per-component `dark:` variants. */
 :root {
   color-scheme: light;
+  --surface-card: #ffffff;
+  --surface-page: #f8fafc;
+  --surface-raised: #f1f5f9;
+  --surface-muted: #e2e8f0;
+  --text-strong: #0f172a;
+  --text-strong-2: #1e293b;
+  --text-body: #334155;
+  --text-muted: #475569;
+  --text-faint: #64748b;
+  --text-dimmer: #94a3b8;
+}
+
+:root.dark {
+  color-scheme: dark;
+  --surface-card: #1b2434;
+  --surface-page: #0b1220;
+  --surface-raised: #172031;
+  --surface-muted: #1f2b3f;
+  --text-strong: #e2e8f0;
+  --text-strong-2: #cbd5e1;
+  --text-body: #b7c4d6;
+  --text-muted: #8fa1b8;
+  --text-faint: #71839b;
+  --text-dimmer: #5b6b83;
+}
+
+@theme inline {
+  --color-white: var(--surface-card);
+  --color-slate-50: var(--surface-page);
+  --color-slate-100: var(--surface-raised);
+  --color-slate-200: var(--surface-muted);
+  --color-slate-400: var(--text-dimmer);
+  --color-slate-500: var(--text-faint);
+  --color-slate-600: var(--text-muted);
+  --color-slate-700: var(--text-body);
+  --color-slate-800: var(--text-strong-2);
+  --color-slate-900: var(--text-strong);
+
+  /* Fixed-dark surfaces: used for buttons, hero and tickers where the panel
+     must stay dark regardless of theme (paired with white text). */
+  --color-ink: #0f172a;
+  --color-ink-soft: #334155;
+  --color-ink-fade: #475569;
+}
+
+/* slate-300 is intentionally NOT remapped: it is both a light foreground on
+   dark panels (hero, tickers) and a neutral border on inputs. */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

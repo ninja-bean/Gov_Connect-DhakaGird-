@@ -8,6 +8,7 @@ import { Container, PageHeader } from "@/components/ui/page-header";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
+import ConfirmSubmit from "@/components/confirm-submit";
 
 export const metadata: Metadata = { title: "Teams | GovConnect Admin" };
 
@@ -16,20 +17,26 @@ function TeamActionForm({
   userId,
   label,
   className,
+  confirm,
 }: {
   action: "approveTeam" | "rejectTeam";
   userId: number;
   label: string;
   className: string;
+  confirm?: boolean;
 }) {
   return (
     <form action={runClickAction}>
       <input type="hidden" name="action" value={action} />
       <input type="hidden" name="userId" value={userId} />
       <input type="hidden" name="back" value="/admin/teams" />
-      <button type="submit" className={className}>
-        {label}
-      </button>
+      {confirm ? (
+        <ConfirmSubmit label={label} tone="danger" />
+      ) : (
+        <button type="submit" className={className}>
+          {label}
+        </button>
+      )}
     </form>
   );
 }
@@ -117,6 +124,7 @@ export default async function AdminTeamsPage({
                             action="rejectTeam"
                             userId={t.user_id}
                             label="❌ Reject"
+                            confirm
                             className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
                           />
                         </div>

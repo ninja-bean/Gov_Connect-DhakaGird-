@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { db } from "@/lib/db";
 import { requireRole } from "@/lib/auth/guards";
 import ResponseNav from "@/components/response-nav";
@@ -28,9 +29,11 @@ export default async function ResponseProfilePage() {
               <div className="mb-6 flex flex-wrap items-center gap-5">
                 <div className="flex size-24 items-center justify-center overflow-hidden rounded-full border-4 border-slate-200 bg-slate-100 text-3xl">
                   {team.profile_pic ? (
-                    <img
+                    <Image
                       src={`/uploads/profile_pics/${team.profile_pic}`}
                       alt={`${team.name} avatar`}
+                      width={96}
+                      height={96}
                       className="h-full w-full object-cover"
                     />
                   ) : (

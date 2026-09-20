@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import LogoutButton from "./logout-button";
+import ThemeToggle from "./theme-toggle";
 
 export type NavLink = { href: string; label: string; exact?: boolean };
 
@@ -44,6 +45,7 @@ export default function AppNav({
               </Link>
             );
           })}
+          <ThemeToggle />
           <LogoutButton label={logoutLabel} />
         </div>
       </nav>

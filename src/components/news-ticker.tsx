@@ -27,7 +27,7 @@ export default function NewsTicker({ items }: { items: string[] }) {
   }, [messages.length]);
 
   return (
-    <div className="flex items-center gap-4 overflow-hidden rounded-2xl bg-slate-900 px-5 py-4 text-white sm:px-6">
+    <div className="flex items-center gap-4 overflow-hidden rounded-2xl bg-ink px-5 py-4 text-white sm:px-6">
       <span className="shrink-0 rounded-full bg-red-600 px-3 py-1 text-xs font-extrabold tracking-widest text-white">
         LIVE FEED
       </span>

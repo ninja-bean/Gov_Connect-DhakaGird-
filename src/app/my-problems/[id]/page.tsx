@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { requireRole } from "@/lib/auth/guards";
@@ -95,10 +96,12 @@ export default async function ProblemDetailPage({
                   <p className="mb-2 text-sm font-semibold text-slate-500">Media</p>
                   <div className="flex flex-wrap gap-3">
                     {media.map((m) => (
-                      <img
+                      <Image
                         key={m}
                         src={`/uploads/problems/${m}`}
                         alt="Attached evidence"
+                        width={112}
+                        height={112}
                         className="h-28 w-28 rounded-lg border border-slate-200 object-cover"
                       />
                     ))}

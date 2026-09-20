@@ -9,6 +9,7 @@ import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { StatusBadge, PriorityBadge } from "@/components/ui/status-badge";
 import { Select } from "@/components/ui/controls";
 import { EmptyState } from "@/components/ui/empty-state";
+import ConfirmSubmit from "@/components/confirm-submit";
 import type { ProblemStatus } from "@/components/ui/status-badge";
 
 export const metadata: Metadata = { title: "Problems | GovConnect Admin" };
@@ -53,24 +54,17 @@ function QuickActionForm({
   confirm?: boolean;
 }) {
   return (
-    <form
-      action={runClickAction}
-      onSubmit={
-        confirm
-          ? (e) => {
-              if (!window.confirm("Delete this complaint? This moves it to the archive.")) {
-                e.preventDefault();
-              }
-            }
-          : undefined
-      }
-    >
+    <form action={runClickAction}>
       <input type="hidden" name="action" value={action} />
       <input type="hidden" name="problemId" value={problemId} />
       <input type="hidden" name="back" value="/admin/problems" />
-      <button type="submit" className={className}>
-        {label}
-      </button>
+      {confirm ? (
+        <ConfirmSubmit label={label} tone="danger" />
+      ) : (
+        <button type="submit" className={className}>
+          {label}
+        </button>
+      )}
     </form>
   );
 }
@@ -151,6 +145,7 @@ function ProblemCard({ p, teamName }: { p: Row; teamName?: string }) {
             action="rejectProblem"
             problemId={p.problem_id}
             label="❌ Reject"
+            confirm
             className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
           />
         )}
@@ -160,7 +155,6 @@ function ProblemCard({ p, teamName }: { p: Row; teamName?: string }) {
           problemId={p.problem_id}
           label="🗑 Delete"
           confirm
-          className="rounded-lg border border-red-200 px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
         />
       </div>
     </li>

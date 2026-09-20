@@ -9,6 +9,7 @@ import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { Badge, type Tone } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/controls";
+import ConfirmSubmit from "@/components/confirm-submit";
 
 export const metadata: Metadata = { title: "Users | GovConnect Admin" };
 
@@ -39,12 +40,7 @@ function BanForm({ user, search }: { user: { user_id: number }; search: string }
           <input type="checkbox" name="permanent" value="1" className="h-4 w-4 rounded accent-red-600" />
           Permanent
         </label>
-        <button
-          type="submit"
-          className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-        >
-          Ban
-        </button>
+        <ConfirmSubmit label="Ban" tone="danger" />
       </div>
     </form>
   );

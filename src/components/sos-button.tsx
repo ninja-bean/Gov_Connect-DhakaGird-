@@ -92,7 +92,7 @@ export default function SosButton() {
                 <h3 className="text-lg font-bold text-slate-900">Location sent!</h3>
                 <button
                   onClick={reset}
-                  className="mt-6 rounded-lg bg-slate-900 px-8 py-3 text-sm font-semibold text-white"
+                  className="mt-6 rounded-lg bg-ink px-8 py-3 text-sm font-semibold text-white"
                 >
                   OK
                 </button>
