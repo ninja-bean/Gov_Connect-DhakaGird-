@@ -5,6 +5,9 @@ import { requireRole } from "@/lib/auth/guards";
 import { isCurrentlyBanned, SOS_CATEGORY } from "@/lib/problems";
 import CitizenNav from "@/components/citizen-nav";
 import SosButton from "@/components/sos-button";
+import NewsTicker from "@/components/news-ticker";
+import WeatherCard from "@/components/weather-card";
+import { AnalyticsDoughnut } from "@/components/analytics-doughnut";
 import ProblemMap, { type MapMarker } from "@/components/problem-map";
 import { Container } from "@/components/ui/page-header";
 import { StatCard } from "@/components/ui/stat-card";
@@ -13,46 +16,106 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 
+const CHART_COLORS = {
+  traffic: "#1E293B",
+  water: "#3B82F6",
+  waste: "#10B981",
+  sos: "#EF4444",
+  other: "#94A3B8",
+} as const;
+
+const TICKER_FALLBACK = [
+  "⚡ Grid system operating normally.",
+  "📢 Report any issues immediately.",
+  "🌧️ Check weather updates before travel.",
+];
+
 export const metadata: Metadata = { title: "Dashboard | GovConnect" };
 
 export default async function CitizenDashboard() {
   const session = await requireRole("user");
 
-  const [user, reports, mapReports, recent, notice] = await Promise.all([
-    db.users.findUniqueOrThrow({
-      where: { user_id: session.userId },
-      select: { name: true, is_banned: true, ban_until: true, profile_pic: true },
-    }),
-    db.problems.findMany({
-      where: { user_id: session.userId },
-      select: { category: true, status: true },
-    }),
-    db.problems.findMany({
-      where: {
-        latitude: { not: null },
-        longitude: { not: null },
-        status: { notIn: ["resolved", "rejected"] },
-      },
-      select: { latitude: true, longitude: true, category: true, status: true, created_at: true },
-      orderBy: { created_at: "desc" },
-      take: 100,
-    }),
-    db.problems.findMany({
-      where: { user_id: session.userId },
-      orderBy: { created_at: "desc" },
-      take: 6,
-    }),
-    db.warnings.findFirst({
-      where: { OR: [{ user_id: null }, { user_id: session.userId }] },
-      orderBy: { created_at: "desc" },
-    }),
-  ]);
+  const [user, reports, mapReports, recent, notice, resolvedFeed, pendingFeed, sosFeed] =
+    await Promise.all([
+      db.users.findUniqueOrThrow({
+        where: { user_id: session.userId },
+        select: { name: true, is_banned: true, ban_until: true, profile_pic: true },
+      }),
+      db.problems.findMany({
+        where: { user_id: session.userId },
+        select: { category: true, status: true },
+      }),
+      db.problems.findMany({
+        where: {
+          latitude: { not: null },
+          longitude: { not: null },
+          status: { notIn: ["resolved", "rejected"] },
+        },
+        select: { latitude: true, longitude: true, category: true, status: true, created_at: true },
+        orderBy: { created_at: "desc" },
+        take: 100,
+      }),
+      db.problems.findMany({
+        where: { user_id: session.userId },
+        orderBy: { created_at: "desc" },
+        take: 6,
+      }),
+      db.warnings.findFirst({
+        where: { OR: [{ user_id: null }, { user_id: session.userId }] },
+        orderBy: { created_at: "desc" },
+      }),
+      db.problems.findMany({
+        where: { status: "resolved" },
+        select: { category: true, location_name: true },
+        orderBy: { updated_at: "desc" },
+        take: 8,
+      }),
+      db.problems.count({ where: { status: "pending" } }),
+      db.problems.count({
+        where: {
+          category: SOS_CATEGORY,
+          status: "pending",
+          created_at: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
+        },
+      }),
+    ]);
 
   const total = reports.length;
   const sos = reports.filter((r) => r.category.toUpperCase() === SOS_CATEGORY).length;
   const resolved = reports.filter((r) => r.status === "resolved").length;
   const xp = reports.reduce((acc, r) => acc + (r.status === "resolved" ? 50 : 10), 0);
   const level = Math.floor(xp / 100) + 1;
+
+  const tickerItems: string[] = resolvedFeed.map(
+    (r) =>
+      `✅ Solved: ${r.category.charAt(0).toUpperCase() + r.category.slice(1)} issue in ${
+        r.location_name || "Dhaka area"
+      }`,
+  );
+  tickerItems.push(`⚡ ${pendingFeed} reports pending verification citywide`);
+  if (sosFeed > 0) {
+    tickerItems.push(`🚨 ${sosFeed} active emergency alerts in last 24 hours`);
+  }
+  if (tickerItems.length === 0) {
+    tickerItems.push(...TICKER_FALLBACK);
+  }
+
+  const chartCounts = { traffic: 0, water: 0, waste: 0, sos: 0, other: 0 };
+  for (const r of reports) {
+    const cat = r.category.toLowerCase();
+    if (cat === "traffic") chartCounts.traffic++;
+    else if (cat === "water") chartCounts.water++;
+    else if (cat === "waste") chartCounts.waste++;
+    else if (cat === "sos") chartCounts.sos++;
+    else chartCounts.other++;
+  }
+  const chartSlices = [
+    { label: "Traffic", value: chartCounts.traffic, color: CHART_COLORS.traffic },
+    { label: "Water", value: chartCounts.water, color: CHART_COLORS.water },
+    { label: "Waste", value: chartCounts.waste, color: CHART_COLORS.waste },
+    { label: "SOS", value: chartCounts.sos, color: CHART_COLORS.sos },
+    { label: "Other", value: chartCounts.other, color: CHART_COLORS.other },
+  ];
 
   const markers: MapMarker[] = mapReports
     .filter((r) => r.latitude !== null && r.longitude !== null)
@@ -84,11 +147,14 @@ export default async function CitizenDashboard() {
 
       <main className="py-8">
         <Container>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <NewsTicker items={tickerItems} />
+
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             <StatCard icon="📋" label="My reports" value={total} tone="blue" />
             <StatCard icon="🚨" label="SOS alerts" value={sos} tone="red" />
             <StatCard icon="✅" label="Resolved" value={resolved} tone="green" />
             <StatCard icon="🏙️" label={`City Watch · Level ${level}`} value={`${xp} XP`} tone="amber" />
+            <WeatherCard />
           </div>
 
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
@@ -192,6 +258,13 @@ export default async function CitizenDashboard() {
                     <span>{xp} XP</span>
                     <span>Next: Grid Guardian</span>
                   </div>
+                </CardBody>
+              </Card>
+
+              <Card>
+                <CardHeader icon={<span aria-hidden>📊</span>} title="Report Analytics" />
+                <CardBody className="pt-4">
+                  <AnalyticsDoughnut slices={chartSlices} />
                 </CardBody>
               </Card>
             </div>
