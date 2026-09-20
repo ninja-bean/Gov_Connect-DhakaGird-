@@ -3,7 +3,7 @@ session_start();
 require_once "db_connect.php";
 
 // --- Authentication ---
-if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['user', 'response'])) {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'user') {
     header("Location: login.php");
     exit();
 }
@@ -464,7 +464,6 @@ unset($_SESSION['success'], $_SESSION['error']);
             
             <div class="card-body">
                 <form id="passwordForm" method="POST" action="change_password_controller.php">
-                    <input type="hidden" name="change_password" value="1">
                     
                     <!-- Current Password -->
                     <div class="form-group">

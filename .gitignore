@@ -1,27 +1,28 @@
-# Composer / build
-/vendor/
-composer.phar
-composer.lock.install
+# ---- Local configuration & secrets ----
+# Real DB credentials live only on the machine; never commit them.
+db_connect.php
+.env
+*.local.php
+
+# ---- Scratch generated files ----
+generate_hash.php
+tempCodeRunnerFile.php
+
+# ---- Media / large binaries ----
+*.mp4
+*.mov
+*.wmv
+*.avi
+*.zip
+*.rar
+
+# ---- IDE / OS clutter ----
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
 *.log
 
-# PHPUnit
-.phpunit.cache/
-
-# Local config & env (credentials never committed)
-/.env
-/config/env.local.php
-
-# Uploaded user content
-/uploads/
-/profile_pics/
-/problems/
-
-# Stray media
-*.mp4
-
-# OS / editor junk
-Thumbs.db
-.DS_Store
-*.code-workspace
-.vscode/
-.idea/
+# ---- Runtime uploads ----
+uploads/
+media/

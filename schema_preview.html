@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DhakaGrid — Database Schema</title>
+<style>
+  :root {
+    --bg:#0f172a; --card:#1e293b; --border:#334155;
+    --text:#e2e8f0; --muted:#94a3b8; --accent:#3b82f6;
+    --pk:#f59e0b; --fk:#10b981;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color:var(--text); padding:30px; }
+  .header { text-align:center; margin-bottom:30px; }
+  .header h1 { font-size:1.9rem; letter-spacing:.5px; }
+  .header p { color:var(--muted); margin-top:6px; }
+  .legend { display:flex; gap:24px; justify-content:center; margin-top:14px; color:var(--muted); font-size:.85rem; flex-wrap:wrap; }
+  .legend span b { font-weight:600; }
+  .legend .pk { color:var(--pk); } .legend .fk { color:var(--fk); }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(340px,1fr)); gap:22px; max-width:1400px; margin:0 auto; }
+  .table-card { background:var(--card); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
+  .tc-head { padding:14px 18px; background:rgba(255,255,255,.04); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .tc-head h2 { font-size:1.05rem; }
+  .tc-head span { font-size:.75rem; color:var(--muted); }
+  .tc-body { padding:6px 0; }
+  .row { display:flex; align-items:center; justify-content:space-between; padding:8px 18px; border-bottom:1px solid rgba(255,255,255,.04); font-size:.86rem; }
+  .row:last-child { border-bottom:none; }
+  .col { font-weight:600; white-space:nowrap; }
+  .type { color:var(--muted); font-size:.78rem; }
+  .tag { font-size:.68rem; font-weight:700; padding:2px 7px; border-radius:6px; margin-left:6px; }
+  .pk-tag { color:var(--pk); background:rgba(245,158,11,.12); }
+  .fk-tag { color:var(--fk); background:rgba(16,185,129,.12); }
+  .relations { margin:22px auto 0; max-width:1400px; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px; }
+  .relations h3 { margin-bottom:12px; font-size:1rem; }
+  .rel { color:var(--muted); font-size:.86rem; padding:5px 0; display:flex; gap:12px; }
+  .rel b { color:var(--text); font-weight:600; }
+  .arrow { color:var(--accent); }
+  .footer { text-align:center; color:var(--muted); font-size:.8rem; margin-top:30px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>DhakaGrid — Database Schema</h1>
+  <p>Database: <code>g1</code> &nbsp;•&nbsp; Reconstructed from PHP source &nbsp;•&nbsp; File: <code>dhakagrid.sql</code></p>
+  <div class="legend">
+    <span><b class="pk">PK</b> Primary Key</span>
+    <span><b class="fk">FK</b> Foreign Key</span>
+    <span><b>7</b> Tables</span>
+  </div>
+</div>
+
+<div class="grid">
+
+  <div class="table-card">
+    <div class="tc-head"><h2>users</h2><span>citizens · response teams · admins</span></div>
+    <div class="tc-body">
+      <div class="row"><span><span class="col">user_id</span><span class="tag pk-tag">PK</span></span><span class="type">INT UNSIGNED AUTO_INCREMENT</span></div>
+      <div class="row"><span class="col">name</span><span class="type">VARCHAR(100)</span></div>
+      <div class="row"><span class="col">email</span><span class="type">VARCHAR(150) UNIQUE</span></div>
+      <div class="row"><span class="col">phone</span><span class="type">VARCHAR(20)</span></div>
+      <div class="row"><span class="col">password</span><span class="type">VARCHAR(255) — bcrypt</span></div>
+      <div class="row"><span class="col">role</span><span class="type">ENUM(user,response,admin)</span></div>
+      <div class="row"><span class="col">status</span><span class="type">ENUM(pending,active,rejected)</span></div>
+      <div class="row"><span class="col">nid</span><span class="type">VARCHAR(50) NULL</span></div>
+      <div class="row"><span class="col">dob</span><span class="type">DATE NULL</span></div>
+      <div class="row"><span class="col">location</span><span class="type">VARCHAR(255) NULL</span></div>
+      <div class="row"><span class="col">latitude / longitude</span><span class="type">DECIMAL(10,7) NULL</span></div>
+      <div class="row"><span class="col">profile_pic</span><span class="type">VARCHAR(255) NULL</span></div>
+      <div class="row"><span class="col">category</span><span class="type">VARCHAR(20) NULL — police/fire/medical</span></div>
+      <div class="row"><span class="col">incharge_name</span><span class="type">VARCHAR(100) NULL</span></div>
+      <div class="row"><span class="col">incharge_id</span><span class="type">VARCHAR(50) NULL</span></div>
+      <div class="row"><span class="col">incharge_email</span><span class="type">VARCHAR(150) NULL</span></div>
+      <div class="row"><span class="col">incharge_phone</span><span class="type">VARCHAR(20) NULL</span></div>
+      <div class="row"><span class="col">identification</span><span class="type">VARCHAR(100) NULL</span></div>
+      <div class="row"><span class="col">employee_number</span><span class="type">VARCHAR(30) NULL</span></div>
+      <div class="row"><span class="col">total_members</span><span class="type">INT UNSIGNED DEFAULT 0</span></div>
+      <div class="row"><span class="col">busy_members</span><span class="type">INT UNSIGNED DEFAULT 0</span></div>
+      <div class="row"><span class="col">is_banned</span><span class="type">TINYINT(1) DEFAULT 0</span></div>
+      <div class="row"><span class="col">ban_until</span><span class="type">VARCHAR(20) NULL — 'permanent' | datetime</span></div>
+      <div class="row"><span class="col">ban_reason</span><span class="type">TEXT NULL</span></div>
+      <div class="row"><span class="col">created_at</span><span class="type">TIMESTAMP</span></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <div class="tc-head"><h2>problems</h2><span>citizen reports &amp; SOS alerts</span></div>
+    <div class="tc-body">
+      <div class="row"><span><span class="col">problem_id</span><span class="tag pk-tag">PK</span></span><span class="type">INT UNSIGNED AUTO_INCREMENT</span></div>
+      <div class="row"><span><span class="col">user_id</span><span class="tag fk-tag">FK → users</span></span><span class="type">INT UNSIGNED</span></div>
+      <div class="row"><span class="col">category</span><span class="type">VARCHAR(20) — police/medical/fire/gov/other/SOS</span></div>
+      <div class="row"><span class="col">description</span><span class="type">TEXT</span></div>
+      <div class="row"><span class="col">suggestion</span><span class="type">VARCHAR(255) NULL</span></div>
+      <div class="row"><span class="col">location</span><span class="type">VARCHAR(500) NULL</span></div>
+      <div class="row"><span class="col">location_name</span><span class="type">VARCHAR(500) NULL</span></div>
+      <div class="row"><span class="col">latitude / longitude</span><span class="type">DECIMAL(10,7) NULL</span></div>
+      <div class="row"><span class="col">media_path</span><span class="type">VARCHAR(500) NULL — comma-separated</span></div>
+      <div class="row"><span class="col">status</span><span class="type">ENUM(pending,verified,assigned,working,resolved,rejected)</span></div>
+      <div class="row"><span class="col">priority</span><span class="type">ENUM(low,medium,high,sos)</span></div>
+      <div class="row"><span><span class="col">assigned_to</span><span class="tag fk-tag">FK → users</span></span><span class="type">INT UNSIGNED NULL</span></div>
+      <div class="row"><span class="col">working_members</span><span class="type">INT UNSIGNED DEFAULT 0</span></div>
+      <div class="row"><span class="col">report</span><span class="type">TEXT NULL</span></div>
+      <div class="row"><span class="col">deleted_by_admin</span><span class="type">TINYINT(1) DEFAULT 0</span></div>
+      <div class="row"><span class="col">deleted_by_team</span><span class="type">TINYINT(1) DEFAULT 0</span></div>
+      <div class="row"><span class="col">created_at</span><span class="type">TIMESTAMP</span></div>
+      <div class="row"><span class="col">updated_at</span><span class="type">TIMESTAMP ON UPDATE</span></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <div class="tc-head"><h2>deleted_problems</h2><span>archive of soft-deleted reports</span></div>
+    <div class="tc-body">
+      <div class="row"><span><span class="col">del_id</span><span class="tag pk-tag">PK</span></span><span class="type">INT UNSIGNED AUTO_INCREMENT</span></div>
+      <div class="row"><span><span class="col">problem_id</span><span class="tag fk-tag">ref problems</span></span><span class="type">INT UNSIGNED NULL</span></div>
+      <div class="row"><span><span class="col">user_id</span><span class="tag fk-tag">ref users</span></span><span class="type">INT UNSIGNED NULL</span></div>
+      <div class="row"><span class="col">user_name</span><span class="type">VARCHAR(100) NULL</span></div>
+      <div class="row"><span class="col">user_email</span><span class="type">VARCHAR(150) NULL</span></div>
+      <div class="row"><span class="col">user_phone</span><span class="type">VARCHAR(50) NULL</span></div>
+      <div class="row"><span class="col">category</span><span class="type">VARCHAR(50) NULL</span></div>
+      <div class="row"><span class="col">description</span><span class="type">TEXT NULL</span></div>
+      <div class="row"><span class="col">suggestion</span><span class="type">VARCHAR(255) NULL</span></div>
+      <div class="row"><span class="col">location</span><span class="type">VARCHAR(255) NULL</span></div>
+      <div class="row"><span class="col">status</span><span class="type">VARCHAR(50) NULL</span></div>
+      <div class="row"><span class="col">priority</span><span class="type">VARCHAR(50) NULL</span></div>
+      <div class="row"><span class="col">report</span><span class="type">TEXT NULL</span></div>
+      <div class="row"><span class="col">deleted_at</span><span class="type">TIMESTAMP</span></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <div class="tc-head"><h2>unban_requests</h2><span>banned-user appeals</span></div>
+    <div class="tc-body">
+      <div class="row"><span><span class="col">id</span><span class="tag pk-tag">PK</span></span><span class="type">INT UNSIGNED AUTO_INCREMENT</span></div>
+      <div class="row"><span><span class="col">user_id</span><span class="tag fk-tag">FK → users</span></span><span class="type">INT UNSIGNED</span></div>
+      <div class="row"><span class="col">reason</span><span class="type">TEXT NULL</span></div>
+      <div class="row"><span class="col">message</span><span class="type">TEXT NULL</span></div>
+      <div class="row"><span class="col">status</span><span class="type">ENUM(pending,reviewed,approved,rejected)</span></div>
+      <div class="row"><span class="col">admin_response</span><span class="type">TEXT NULL</span></div>
+      <div class="row"><span class="col">reviewed_at</span><span class="type">DATETIME NULL</span></div>
+      <div class="row"><span class="col">created_at</span><span class="type">TIMESTAMP</span></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <div class="tc-head"><h2>warnings</h2><span>admin warnings · gov notices</span></div>
+    <div class="tc-body">
+      <div class="row"><span><span class="col">id</span><span class="tag pk-tag">PK</span></span><span class="type">INT UNSIGNED AUTO_INCREMENT</span></div>
+      <div class="row"><span><span class="col">user_id</span><span class="tag fk-tag">ref users</span></span><span class="type">INT UNSIGNED NULL — NULL = public</span></div>
+      <div class="row"><span><span class="col">admin_id</span><span class="tag fk-tag">ref users</span></span><span class="type">INT UNSIGNED NULL</span></div>
+      <div class="row"><span class="col">message</span><span class="type">TEXT NULL</span></div>
+      <div class="row"><span class="col">created_at</span><span class="type">TIMESTAMP</span></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <div class="tc-head"><h2>feedbacks</h2><span>rating on resolved complaints</span></div>
+    <div class="tc-body">
+      <div class="row"><span><span class="col">feedback_id</span><span class="tag pk-tag">PK</span></span><span class="type">INT UNSIGNED AUTO_INCREMENT</span></div>
+      <div class="row"><span><span class="col">problem_id</span><span class="tag fk-tag">FK → problems</span></span><span class="type">INT UNSIGNED</span></div>
+      <div class="row"><span><span class="col">user_id</span><span class="tag fk-tag">FK → users</span></span><span class="type">INT UNSIGNED</span></div>
+      <div class="row"><span class="col">rating</span><span class="type">TINYINT UNSIGNED (1–5)</span></div>
+      <div class="row"><span class="col">comment</span><span class="type">TEXT NULL</span></div>
+      <div class="row"><span class="col">created_at</span><span class="type">TIMESTAMP</span></div>
+      <div class="row"><span class="col">UNIQUE</span><span class="type">(problem_id, user_id) — one per user</span></div>
+    </div>
+  </div>
+
+  <div class="table-card">
+    <div class="tc-head"><h2>logs</h2><span>activity &amp; notification audit</span></div>
+    <div class="tc-body">
+      <div class="row"><span><span class="col">id</span><span class="tag pk-tag">PK</span></span><span class="type">INT UNSIGNED AUTO_INCREMENT</span></div>
+      <div class="row"><span><span class="col">problem_id</span><span class="tag fk-tag">ref problems</span></span><span class="type">INT UNSIGNED NULL</span></div>
+      <div class="row"><span><span class="col">user_id</span><span class="tag fk-tag">ref users</span></span><span class="type">INT UNSIGNED NULL</span></div>
+      <div class="row"><span class="col">notification_type</span><span class="type">VARCHAR(50) NULL — e.g. SOS</span></div>
+      <div class="row"><span class="col">message</span><span class="type">TEXT NULL</span></div>
+      <div class="row"><span class="col">created_at</span><span class="type">TIMESTAMP</span></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="relations">
+  <h3>Relationships</h3>
+  <div class="rel"><span class="arrow">—</span><b>users (1)</b> <span>—→ (N) <b>problems</b> : each report belongs to a citizen</span></div>
+  <div class="rel"><span class="arrow">—</span><b>users (1, response team)</b> <span>—→ (N) <b>problems.assigned_to</b> : problem assigned to a team</span></div>
+  <div class="rel"><span class="arrow">—</span><b>problems (1)</b> <span>—→ (N) <b>deleted_problems</b> : soft-deleted archive snapshot</span></div>
+  <div class="rel"><span class="arrow">—</span><b>users (1)</b> <span>—→ (N) <b>unban_requests</b> : appeals (cascade delete)</span></div>
+  <div class="rel"><span class="arrow">—</span><b>users (1)</b> <span>—→ (N) <b>warnings</b> : target user; <b>admin_id</b> is the issuing admin</span></div>
+  <div class="rel"><span class="arrow">—</span><b>problems + users</b> <span>—→ (N) <b>feedbacks</b> : one rating per user per problem</span></div>
+  <div class="rel"><span class="arrow">—</span><b>problems + users</b> <span>—→ (N) <b>logs</b> : audit trail (SOS triggers, notifications)</span></div>
+</div>
+
+<div class="footer">dhakagrid.sql • reconstructed from PHP source • import with: mysql -u root -p g1 &lt; dhakagrid.sql</div>
+
+</body>
+</html>

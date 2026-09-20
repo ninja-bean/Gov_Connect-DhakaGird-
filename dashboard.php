@@ -1,29 +1,28 @@
 <?php
-
-declare(strict_types=1);
-
-use App\Core\Auth;
-use App\Core\Redirect;
-
-require_once __DIR__ . '/bootstrap.php';
+session_start();
 
 // If user is not logged in, redirect to login
-if (!Auth::isLoggedIn()) {
-    Redirect::to('login.php');
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['role'])) {
+    header("Location: login.php");
+    exit();
 }
 
-$role = Auth::role();
+$role = $_SESSION['role'];
 
 // Redirect user based on role
 switch ($role) {
     case 'user':
-        Redirect::to('user_dashboard.php');
+        header("Location: user_dashboard.php");
+        exit();
     case 'response':
-        Redirect::to('response_dashboard.php');
+        header("Location: response_dashboard.php");
+        exit();
     case 'admin':
-        Redirect::to('admin_dashboard.php');
+        header("Location: admin_dashboard.php");
+        exit();
     default:
         // If role is invalid, destroy session and force login again
-        Auth::logout();
-        Redirect::withError('login.php', 'invalid_role');
+        session_destroy();
+        header("Location: login.php?error=invalid_role");
+        exit();
 }
