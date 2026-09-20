@@ -6,16 +6,16 @@ type Size = "sm" | "md" | "lg";
 
 const base =
   "inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition " +
-  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 " +
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 " +
   "disabled:pointer-events-none disabled:opacity-60";
 
 const variants: Record<Variant, string> = {
-  primary: "bg-blue-600 text-white hover:bg-blue-500 active:bg-blue-700",
+  primary: "bg-red-600 text-white hover:bg-red-500 active:bg-red-700",
   dark: "bg-ink text-white hover:bg-ink-soft active:bg-ink/80",
   secondary:
     "border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 active:bg-slate-100",
-  danger: "bg-red-600 text-white hover:bg-red-500 active:bg-red-700",
-  success: "bg-emerald-600 text-white hover:bg-emerald-500 active:bg-emerald-700",
+  danger: "bg-red-700 text-white hover:bg-red-600 active:bg-red-800",
+  success: "bg-ink text-white hover:bg-ink-soft active:bg-ink/80",
   ghost: "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
 };
 

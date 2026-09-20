@@ -41,7 +41,7 @@ export default async function AppealPage() {
                 <AppealForm />
               </>
             ) : (
-              <p className="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700">
+              <p className="rounded-lg bg-slate-50 px-4 py-3 text-sm text-slate-700">
                 Your account is active — no appeal needed.
               </p>
             )}

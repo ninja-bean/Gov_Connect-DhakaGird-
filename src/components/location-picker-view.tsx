@@ -100,7 +100,7 @@ export default function LocationPickerView({
         name="location"
         readOnly
         placeholder="Click a button below to set location"
-        className="w-full rounded-lg border border-slate-300 bg-slate-50 px-4 py-2.5 text-sm text-slate-700 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+        className="w-full rounded-lg border border-slate-300 bg-slate-50 px-4 py-2.5 text-sm text-slate-700 focus:border-red-500 focus:outline-none focus:ring-2 focus:ring-red-500/20"
       />
       <input ref={latInputRef} type="hidden" name="latitude" defaultValue={initialLat ?? ""} />
       <input ref={lngInputRef} type="hidden" name="longitude" defaultValue={initialLng ?? ""} />
@@ -108,14 +108,14 @@ export default function LocationPickerView({
         <button
           type="button"
           onClick={useCurrentLocation}
-          className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-blue-500 hover:text-blue-600"
+          className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-red-500 hover:text-red-600"
         >
           Use current location
         </button>
         <button
           type="button"
           onClick={toggleMap}
-          className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-blue-500 hover:text-blue-600"
+          className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-red-500 hover:text-red-600"
         >
           {showMap ? "Hide map" : "Pick on map"}
         </button>

@@ -90,7 +90,7 @@ export default async function AdminTeamsPage({
                               {t.email} {t.phone ? ` · ${t.phone}` : ""}
                             </p>
                           </div>
-                          <Badge tone="amber">{t.category ?? "—"} response</Badge>
+                          <Badge tone="slate">{t.category ?? "—"} response</Badge>
                         </div>
                         <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
                           <div className="rounded-lg bg-slate-50 p-3 text-slate-600">
@@ -118,7 +118,7 @@ export default async function AdminTeamsPage({
                             action="approveTeam"
                             userId={t.user_id}
                             label="✅ Approve"
-                            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+                            className="rounded-lg bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
                           />
                           <TeamActionForm
                             action="rejectTeam"

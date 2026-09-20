@@ -16,9 +16,9 @@ export const metadata: Metadata = { title: "Response Dashboard | GovConnect" };
 
 const GROUPS = [
   { key: "sos", label: "🚨 SOS Emergencies", tone: "text-red-600" },
-  { key: "high", label: "🔥 High Priority", tone: "text-orange-600" },
-  { key: "medium", label: "⚠️ Medium Priority", tone: "text-blue-600" },
-  { key: "low", label: "ℹ️ Low Priority", tone: "text-slate-600" },
+  { key: "high", label: "🔥 High Priority", tone: "text-red-700" },
+  { key: "medium", label: "⚠️ Medium Priority", tone: "text-slate-900" },
+  { key: "low", label: "ℹ️ Low Priority", tone: "text-slate-500" },
 ] as const;
 
 function isSos(priority: string, description: string | null): boolean {
@@ -96,7 +96,7 @@ export default async function ResponseDashboard() {
             description={`${team.name} — ${team.category} response unit`}
             action={
               <div className="flex items-center gap-2">
-                <Badge tone="green">{available} members available</Badge>
+                <Badge tone="ink">{available} members available</Badge>
                 <ButtonLink href="/response/profile" variant="secondary" size="sm">
                   Team Profile
                 </ButtonLink>
@@ -105,9 +105,9 @@ export default async function ResponseDashboard() {
           />
 
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <StatCard icon="👷" label="Available members" value={available} tone="green" />
+            <StatCard icon="👷" label="Available members" value={available} tone="ink" />
             <StatCard icon="🚨" label="SOS emergencies" value={sosCount} tone="red" />
-            <StatCard icon="🔧" label="Working now" value={working} tone="blue" />
+            <StatCard icon="🔧" label="Working now" value={working} tone="slate" />
             <StatCard icon="✅" label="Resolved" value={resolved} tone="slate" />
           </div>
 
@@ -116,8 +116,8 @@ export default async function ResponseDashboard() {
               icon={<span aria-hidden>🗺️</span>}
               title="Assigned Problems Map"
               action={
-                <span className="flex items-center gap-2 text-xs font-semibold text-emerald-600">
-                  <span className="h-2 w-2 rounded-full bg-emerald-500" /> Live
+                <span className="flex items-center gap-2 text-xs font-semibold text-red-600">
+                  <span className="h-2 w-2 rounded-full bg-red-500" /> Live
                 </span>
               }
             />
@@ -198,7 +198,7 @@ export default async function ResponseDashboard() {
                             </div>
 
                             {p.status === "working" && p.working_members > 0 && (
-                              <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 ring-1 ring-inset ring-blue-200">
+                              <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-red-700 ring-1 ring-inset ring-red-200">
                                 👷 {p.working_members} member(s) working
                               </p>
                             )}
@@ -215,7 +215,7 @@ export default async function ResponseDashboard() {
                             )}
 
                             {p.status === "resolved" && p.report && (
-                              <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">
+                              <div className="mt-4 rounded-lg border border-slate-300 bg-slate-50 p-3 text-sm text-slate-700">
                                 <span className="font-semibold">Team report:</span> {p.report}
                               </div>
                             )}
@@ -233,7 +233,7 @@ export default async function ResponseDashboard() {
             <CardHeader icon={<span aria-hidden>🗑️</span>} title="Deleted Complaints" />
             <CardBody>
               <details>
-                <summary className="cursor-pointer text-sm font-semibold text-blue-600 hover:underline">
+                <summary className="cursor-pointer text-sm font-semibold text-red-600 hover:underline">
                   Show deleted complaints ({deletedProblems.length})
                 </summary>
                 {deletedProblems.length === 0 ? (

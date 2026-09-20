@@ -66,7 +66,7 @@ export default function ReportForm() {
       >
         <label
           htmlFor="media"
-          className="block w-full cursor-pointer rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 px-6 py-8 text-center transition hover:border-blue-500 hover:bg-blue-50/30"
+          className="block w-full cursor-pointer rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 px-6 py-8 text-center transition hover:border-red-500 hover:bg-red-50/30"
         >
           <p className="text-sm font-semibold text-slate-700">Upload images</p>
           <p className="mt-1 text-xs text-slate-400">JPG, PNG, WebP · Max 10MB per file</p>

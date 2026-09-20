@@ -57,7 +57,7 @@ export default async function ProblemDetailPage({
         <Container className="max-w-3xl">
           <Link
             href="/my-problems"
-            className="text-sm font-semibold text-blue-600 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            className="text-sm font-semibold text-red-600 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
           >
             ← Back to my reports
           </Link>
@@ -116,7 +116,7 @@ export default async function ProblemDetailPage({
             <CardBody>
               {feedback ? (
                 <div>
-                  <p className="text-lg text-amber-500" aria-label={`${feedback.rating} out of 5 stars`}>
+                  <p className="text-lg text-red-600" aria-label={`${feedback.rating} out of 5 stars`}>
                     {"★".repeat(feedback.rating)}
                     <span className="text-slate-300">{"★".repeat(5 - feedback.rating)}</span>
                   </p>

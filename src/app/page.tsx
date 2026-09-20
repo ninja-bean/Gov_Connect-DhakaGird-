@@ -50,7 +50,7 @@ export default function Home() {
           <div className="mt-8 flex justify-center gap-4">
             <Link
               href="/login"
-              className="rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-500"
+              className="rounded-lg bg-red-600 px-6 py-3 font-semibold text-white transition hover:bg-red-500"
             >
               Login
             </Link>
@@ -98,7 +98,7 @@ export default function Home() {
                   {initials(member.name)}
                 </div>
                 <h3 className="mt-4 font-bold">{member.name}</h3>
-                <p className="mt-1 text-sm font-semibold text-blue-600">{member.role}</p>
+                <p className="mt-1 text-sm font-semibold text-red-600">{member.role}</p>
                 <p className="mt-3 text-sm leading-relaxed text-slate-600">{member.bio}</p>
               </div>
             ))}

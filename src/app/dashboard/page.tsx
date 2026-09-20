@@ -18,11 +18,11 @@ import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 
 const CHART_COLORS = {
-  traffic: "#1E293B",
-  water: "#3B82F6",
-  waste: "#10B981",
-  sos: "#EF4444",
-  other: "#94A3B8",
+  traffic: "#0F172A",
+  water: "#EF4444",
+  waste: "#94A3B8",
+  sos: "#B91C1C",
+  other: "#64748B",
 } as const;
 
 const TICKER_FALLBACK = [
@@ -155,17 +155,17 @@ export default async function CitizenDashboard() {
           <NewsTicker items={tickerItems} />
 
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            <StatCard icon="📋" label="My reports" value={total} tone="blue" />
+            <StatCard icon="📋" label="My reports" value={total} tone="ink" />
             <StatCard icon="🚨" label="SOS alerts" value={sos} tone="red" />
-            <StatCard icon="✅" label="Resolved" value={resolved} tone="green" />
-            <StatCard icon="🏙️" label={`City Watch · Level ${level}`} value={`${xp} XP`} tone="amber" />
+            <StatCard icon="✅" label="Resolved" value={resolved} tone="ink" />
+            <StatCard icon="🏙️" label={`City Watch · Level ${level}`} value={`${xp} XP`} tone="ink" />
             <WeatherCard />
           </div>
 
           <div className="mt-6 grid gap-4 sm:grid-cols-2">
             <Link
               href="/report"
-              className="flex items-center justify-center gap-2 rounded-xl border-2 border-slate-900 bg-white px-6 py-4 text-base font-bold text-slate-900 transition hover:bg-ink hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+              className="flex items-center justify-center gap-2 rounded-xl border-2 border-slate-900 bg-white px-6 py-4 text-base font-bold text-slate-900 transition hover:bg-ink hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
             >
               ✏️ Submit Report
             </Link>
@@ -179,8 +179,8 @@ export default async function CitizenDashboard() {
                   icon={<span aria-hidden>🗺️</span>}
                   title="Live Grid Map"
                   action={
-                    <span className="flex items-center gap-2 text-xs font-semibold text-emerald-600">
-                      <span className="h-2 w-2 rounded-full bg-emerald-500" /> Online
+                    <span className="flex items-center gap-2 text-xs font-semibold text-red-600">
+                      <span className="h-2 w-2 rounded-full bg-red-500" /> Online
                     </span>
                   }
                 />
@@ -218,16 +218,16 @@ export default async function CitizenDashboard() {
             </div>
 
             <div className="space-y-6">
-              <Card className="border-l-4 border-l-amber-500 bg-amber-50">
+              <Card className="border-l-4 border-l-red-600 bg-white">
                 <CardBody>
-                  <p className="mb-2 flex items-center gap-2 font-extrabold text-amber-900">
+                  <p className="mb-2 flex items-center gap-2 font-extrabold text-slate-900">
                     📢 GOV NOTICE
                   </p>
-                  <p className="text-sm leading-relaxed text-amber-900">
+                  <p className="text-sm leading-relaxed text-slate-700">
                     {notice?.message ??
                       "Regular grid maintenance is scheduled today. Please report any unexpected outages immediately."}
                   </p>
-                  <p className="mt-3 text-xs text-amber-900/70">
+                  <p className="mt-3 text-xs text-slate-500">
                     Issued{" "}
                     {notice ? notice.created_at.toLocaleDateString() : new Date().toLocaleDateString()}
                   </p>
@@ -257,7 +257,7 @@ export default async function CitizenDashboard() {
                   </div>
                   <div className="mt-5 h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-blue-500 to-indigo-500"
+                      className="h-full rounded-full bg-gradient-to-r from-red-600 to-red-500"
                       style={{ width: `${Math.min(100, xp / 10)}%` }}
                     />
                   </div>

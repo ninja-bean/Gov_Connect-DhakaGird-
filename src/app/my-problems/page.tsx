@@ -45,7 +45,7 @@ export default async function MyProblemsPage() {
                   <li key={p.problem_id}>
                     <Link
                       href={`/my-problems/${p.problem_id}`}
-                      className="block rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-blue-400 hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                      className="block rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-red-400 hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
                     >
                       <div className="flex flex-wrap items-start justify-between gap-4">
                         <div className="min-w-0">

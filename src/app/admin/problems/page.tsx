@@ -114,13 +114,13 @@ function ProblemCard({ p, teamName }: { p: Row; teamName?: string }) {
       </div>
 
       {p.feedbacks.length > 0 && (
-        <div className="mt-3 space-y-2 rounded-lg border border-blue-100 bg-blue-50 p-3">
-          <p className="text-xs font-bold uppercase tracking-wide text-blue-700">User feedback</p>
+        <div className="mt-3 space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-3">
+          <p className="text-xs font-bold uppercase tracking-wide text-slate-700">User feedback</p>
           {p.feedbacks.map((f) => (
             <div key={f.feedback_id} className="text-sm text-slate-700">
               <p>
                 <span className="font-semibold">{f.users?.name ?? "Citizen"}</span> —{" "}
-                <span className="text-amber-500">
+                <span className="text-red-500">
                   {"★".repeat(f.rating)}
                   <span className="text-slate-300">{"★".repeat(5 - f.rating)}</span>
                 </span>
@@ -137,7 +137,7 @@ function ProblemCard({ p, teamName }: { p: Row; teamName?: string }) {
             action="verifyProblem"
             problemId={p.problem_id}
             label="✅ Accept"
-            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+            className="rounded-lg bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
           />
         )}
         {status === "pending" && (
@@ -184,7 +184,7 @@ function AssignForm({ p }: { p: Row }) {
       </Select>
       <button
         type="submit"
-        className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+        className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
       >
         ✔ Assign
       </button>
@@ -232,9 +232,9 @@ export default async function AdminProblemsPage({
   }));
 
   const groups: { title: string; tone: string; items: typeof rows }[] = [
-    { title: "🔍 Pending review", tone: "amber", items: rows.filter((r) => r.status === "pending") },
-    { title: "🧩 Verified — awaiting assignment", tone: "blue", items: rows.filter((r) => r.status === "verified") },
-    { title: "🔧 In progress", tone: "green", items: rows.filter((r) => ["assigned", "working"].includes(r.status)) },
+    { title: "🔍 Pending review", tone: "red", items: rows.filter((r) => r.status === "pending") },
+    { title: "🧩 Verified — awaiting assignment", tone: "slate", items: rows.filter((r) => r.status === "verified") },
+    { title: "🔧 In progress", tone: "ink", items: rows.filter((r) => ["assigned", "working"].includes(r.status)) },
     { title: "✅ Resolved & rejected", tone: "slate", items: rows.filter((r) => ["resolved", "rejected"].includes(r.status)) },
   ];
 
@@ -249,7 +249,7 @@ export default async function AdminProblemsPage({
             action={
               <a
                 href="/api/admin/export/problems"
-                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
               >
                 ⬇️ Download CSV
               </a>
@@ -262,7 +262,7 @@ export default async function AdminProblemsPage({
               <Card key={g.title}>
                 <CardHeader
                   title={
-                    <span className={`capitalize ${g.tone === "amber" ? "text-amber-700" : g.tone === "blue" ? "text-blue-700" : g.tone === "green" ? "text-emerald-700" : "text-slate-600"}`}>
+                    <span className={`capitalize ${g.tone === "red" ? "text-red-700" : g.tone === "ink" ? "text-slate-900" : g.tone === "slate" ? "text-slate-600" : "text-slate-700"}`}>
                       {g.title}
                     </span>
                   }
@@ -286,7 +286,7 @@ export default async function AdminProblemsPage({
             <CardHeader icon={<span aria-hidden>🗑️</span>} title="Archived (deleted) complaints" />
             <CardBody>
               <details>
-                <summary className="cursor-pointer text-sm font-semibold text-blue-600 hover:underline">
+                <summary className="cursor-pointer text-sm font-semibold text-red-600 hover:underline">
                   Show archives ({deleted.length})
                 </summary>
                 {deleted.length === 0 ? (

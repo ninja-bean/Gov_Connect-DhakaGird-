@@ -13,10 +13,10 @@ import ConfirmSubmit from "@/components/confirm-submit";
 export const metadata: Metadata = { title: "Unban Appeals | GovConnect Admin" };
 
 const statusTone: Record<string, Tone> = {
-  pending: "amber",
-  approved: "green",
+  pending: "slate",
+  approved: "ink",
   rejected: "red",
-  reviewed: "blue",
+  reviewed: "slate",
 };
 
 function AppealActionForm({
@@ -107,7 +107,7 @@ export default async function AdminAppealsPage({
                       </p>
 
                       {r.admin_response && (
-                        <p className="mt-2 rounded-lg bg-blue-50 p-3 text-sm text-blue-800">
+                        <p className="mt-2 rounded-lg bg-slate-50 p-3 text-sm text-slate-700">
                           <span className="font-semibold">Admin response:</span> {r.admin_response}
                         </p>
                       )}
@@ -119,7 +119,7 @@ export default async function AdminAppealsPage({
                             requestId={r.id}
                             userId={r.user_id}
                             label="✅ Approve & unban"
-                            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+                            className="rounded-lg bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
                           />
 <AppealActionForm
                           action="rejectAppeal"

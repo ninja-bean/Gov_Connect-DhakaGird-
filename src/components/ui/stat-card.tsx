@@ -1,10 +1,8 @@
 import type { ReactNode } from "react";
 
 const accent = {
-  blue: "text-blue-600",
-  green: "text-emerald-600",
   red: "text-red-600",
-  amber: "text-amber-600",
+  ink: "text-slate-900",
   slate: "text-slate-600",
 } as const;
 

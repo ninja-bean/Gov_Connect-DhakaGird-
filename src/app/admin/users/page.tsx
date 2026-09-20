@@ -13,7 +13,7 @@ import ConfirmSubmit from "@/components/confirm-submit";
 
 export const metadata: Metadata = { title: "Users | GovConnect Admin" };
 
-const roleTone: Record<string, Tone> = { admin: "red", response: "blue", user: "slate" };
+const roleTone: Record<string, Tone> = { admin: "red", response: "ink", user: "slate" };
 
 function banLabel(user: { is_banned: boolean; ban_until: string | null }): string {
   if (!user.is_banned) return "Active";
@@ -58,11 +58,11 @@ function WarningForm({ user, search }: { user: { user_id: number }; search: stri
         rows={2}
         placeholder="Warning message…"
         aria-label="Warning message"
-        className="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-2 focus:outline-blue-500"
+        className="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-red-500 focus:outline-2 focus:outline-red-500"
       />
       <button
         type="submit"
-        className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-amber-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
+        className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
       >
         Send warning
       </button>
@@ -130,7 +130,7 @@ export default async function AdminUsersPage({
             />
             <button
               type="submit"
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+              className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
             >
               Search
             </button>
@@ -166,7 +166,7 @@ export default async function AdminUsersPage({
                           </p>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge tone={u.is_banned ? "red" : "green"}>{banLabel(u)}</Badge>
+                          <Badge tone={u.is_banned ? "red" : "ink"}>{banLabel(u)}</Badge>
                           <Badge tone={roleTone[u.role] ?? "slate"}>{u.role}</Badge>
                         </div>
                       </div>
@@ -179,7 +179,7 @@ export default async function AdminUsersPage({
                             <input type="hidden" name="back" value={`/admin/users?q=${encodeURIComponent(q)}`} />
                             <button
                               type="submit"
-                              className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+                              className="rounded-lg bg-ink px-4 py-2 text-sm font-semibold text-white transition hover:bg-ink-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
                             >
                               ✅ Unban
                             </button>

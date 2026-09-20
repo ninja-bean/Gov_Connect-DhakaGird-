@@ -3,11 +3,11 @@ import { Badge, type Tone } from "./badge";
 export type ProblemStatus = "pending" | "verified" | "assigned" | "working" | "resolved" | "rejected";
 
 const statusTone: Record<ProblemStatus, Tone> = {
-  pending: "amber",
-  verified: "blue",
-  assigned: "teal",
-  working: "blue",
-  resolved: "green",
+  pending: "slate",
+  verified: "slate",
+  assigned: "ink",
+  working: "ink",
+  resolved: "ink",
   rejected: "red",
 };
 
@@ -27,7 +27,8 @@ export function StatusBadge({ status }: { status: string }) {
 
 export function PriorityBadge({ priority }: { priority: string }) {
   const key = (priority || "low").toLowerCase();
-  const tone: Tone = key === "sos" ? "red" : key === "high" ? "orange" : key === "medium" ? "blue" : "slate";
+  const tone: Tone =
+    key === "sos" || key === "high" ? "red" : key === "medium" ? "ink" : "slate";
   const label = key === "sos" ? "SOS" : key.charAt(0).toUpperCase() + key.slice(1);
   return (
     <Badge tone={tone} className="uppercase">

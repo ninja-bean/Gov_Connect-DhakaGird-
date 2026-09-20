@@ -75,15 +75,15 @@ export default async function AdminDashboard({
           />
           <FlashBanner ok={sp.flash === "ok" ? sp.msg : undefined} err={sp.flash === "err" ? sp.msg : undefined} />
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <StatCard icon="📋" label="Total problems" value={problems.length} tone="blue" />
-            <StatCard icon="🔍" label="Pending review" value={pendingReview} tone="amber" />
-            <StatCard icon="🧩" label="Awaiting assignment" value={awaitingAssignment} tone="blue" />
-            <StatCard icon="🔧" label="Active responses" value={activeCount} tone="green" />
+            <StatCard icon="📋" label="Total problems" value={problems.length} tone="ink" />
+            <StatCard icon="🔍" label="Pending review" value={pendingReview} tone="slate" />
+            <StatCard icon="🧩" label="Awaiting assignment" value={awaitingAssignment} tone="slate" />
+            <StatCard icon="🔧" label="Active responses" value={activeCount} tone="red" />
           </div>
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <StatCard icon="✅" label="Resolved" value={resolvedCount} tone="slate" />
-            <StatCard icon="🛡️" label="Active teams" value={activeTeams} tone="green" />
-            <StatCard icon="⏳" label="Pending approvals" value={pendingTeams} tone="amber" />
+            <StatCard icon="🛡️" label="Active teams" value={activeTeams} tone="ink" />
+            <StatCard icon="⏳" label="Pending approvals" value={pendingTeams} tone="slate" />
             <StatCard icon="🚫" label="Banned users" value={bannedUsers} tone="red" />
           </div>
 
@@ -93,8 +93,8 @@ export default async function AdminDashboard({
                 icon={<span aria-hidden>🗺️</span>}
                 title="Problem Map Overview"
                 action={
-                  <span className="flex items-center gap-2 text-xs font-semibold text-emerald-600">
-                    <span className="h-2 w-2 rounded-full bg-emerald-500" /> Live
+                  <span className="flex items-center gap-2 text-xs font-semibold text-red-600">
+                    <span className="h-2 w-2 rounded-full bg-red-500" /> Live
                   </span>
                 }
               />

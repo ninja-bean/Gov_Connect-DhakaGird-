@@ -3,10 +3,10 @@ import type { ReactNode } from "react";
 export type AlertTone = "success" | "info" | "warning" | "error";
 
 const tones: Record<AlertTone, string> = {
-  success: "border-emerald-200 bg-emerald-50 text-emerald-800",
-  info: "border-blue-200 bg-blue-50 text-blue-800",
-  warning: "border-amber-200 bg-amber-50 text-amber-800",
-  error: "border-red-200 bg-red-50 text-red-800",
+  success: "border-slate-400 bg-white text-slate-900",
+  info: "border-slate-200 bg-slate-50 text-slate-700",
+  warning: "border-red-200 bg-red-50 text-red-800",
+  error: "border-red-400 bg-red-50 text-red-900",
 };
 
 const icons: Record<AlertTone, string> = {
