@@ -11,8 +11,11 @@ const TABS = [
   { value: "response", label: "Response Team" },
 ] as const;
 
-export default function LoginForm() {
-  const [state, formAction, pending] = useActionState<ActionState, FormData>(login, null);
+export default function LoginForm({ initialFlash }: { initialFlash?: string }) {
+  const [state, formAction, pending] = useActionState<ActionState, FormData>(
+    login,
+    initialFlash ? { message: initialFlash } : null,
+  );
   const [tab, setTab] = useState<(typeof TABS)[number]["value"]>("user");
 
   return (

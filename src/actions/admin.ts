@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireRole } from "@/lib/auth/guards";
+import { auditLog, type AuditActor } from "@/lib/audit";
 
 const clickActions = [
   "verifyProblem",
@@ -54,6 +55,7 @@ export async function runClickAction(formData: FormData): Promise<void> {
   }
   const { action, problemId, userId, requestId, back } = parsed.data!;
   const backPath = safeBack(back, "/admin/dashboard");
+  const actor: AuditActor = { id: session.userId, role: session.role };
 
   switch (action) {
     case "verifyProblem": {
@@ -61,6 +63,12 @@ export async function runClickAction(formData: FormData): Promise<void> {
       await db.problems.update({
         where: { problem_id: problemId! },
         data: { status: "verified" },
+      });
+      await auditLog({
+        actor,
+        action: "PROBLEM_VERIFIED",
+        message: `Problem #${problemId} verified`,
+        problemId,
       });
       revalidatePath(backPath);
       flash(backPath, "ok", "Problem verified.");
@@ -72,13 +80,19 @@ export async function runClickAction(formData: FormData): Promise<void> {
         where: { problem_id: problemId! },
         data: { status: "rejected" },
       });
+      await auditLog({
+        actor,
+        action: "PROBLEM_REJECTED",
+        message: `Problem #${problemId} rejected`,
+        problemId,
+      });
       revalidatePath(backPath);
       flash(backPath, "ok", "Problem rejected.");
       break;
     }
     case "deleteProblem": {
       if (!problemId) flash(backPath, "err", "Missing problem id.");
-      deleteProblem(problemId!);
+      await deleteProblem(problemId!, actor);
       flash(backPath, "ok", `Complaint #${problemId!} deleted.`);
       break;
     }
@@ -87,6 +101,11 @@ export async function runClickAction(formData: FormData): Promise<void> {
       await db.users.updateMany({
         where: { user_id: userId!, role: "response" },
         data: { status: "active" },
+      });
+      await auditLog({
+        actor,
+        action: "TEAM_APPROVED",
+        message: `Response team user #${userId} approved`,
       });
       revalidatePath(backPath);
       flash(backPath, "ok", "Response team approved.");
@@ -97,6 +116,11 @@ export async function runClickAction(formData: FormData): Promise<void> {
       await db.users.updateMany({
         where: { user_id: userId!, role: "response" },
         data: { status: "rejected" },
+      });
+      await auditLog({
+        actor,
+        action: "TEAM_REJECTED",
+        message: `Response team user #${userId} rejected`,
       });
       revalidatePath(backPath);
       flash(backPath, "ok", "Response team rejected.");
@@ -111,6 +135,11 @@ export async function runClickAction(formData: FormData): Promise<void> {
         }),
         db.unban_requests.deleteMany({ where: { user_id: userId! } }),
       ]);
+      await auditLog({
+        actor,
+        action: "USER_UNBANNED",
+        message: `User #${userId} unbanned`,
+      });
       revalidatePath(backPath);
       flash(backPath, "ok", "User unbanned.");
       break;
@@ -127,6 +156,11 @@ export async function runClickAction(formData: FormData): Promise<void> {
           data: { status: "approved", admin_response: "Approved by admin", reviewed_at: new Date() },
         }),
       ]);
+      await auditLog({
+        actor,
+        action: "APPEAL_APPROVED",
+        message: `Unban appeal #${requestId} approved for user #${userId}`,
+      });
       revalidatePath(backPath);
       flash(backPath, "ok", "Appeal approved — user unbanned.");
       break;
@@ -137,6 +171,11 @@ export async function runClickAction(formData: FormData): Promise<void> {
         where: { id: requestId! },
         data: { status: "rejected", admin_response: "Rejected by admin", reviewed_at: new Date() },
       });
+      await auditLog({
+        actor,
+        action: "APPEAL_REJECTED",
+        message: `Unban appeal #${requestId} rejected`,
+      });
       revalidatePath(backPath);
       flash(backPath, "ok", "Appeal rejected.");
       break;
@@ -144,7 +183,7 @@ export async function runClickAction(formData: FormData): Promise<void> {
   }
 }
 
-async function deleteProblem(problemId: number) {
+async function deleteProblem(problemId: number, actor: AuditActor) {
   const problem = await db.problems.findFirst({
     where: { problem_id: problemId, deleted_by_admin: false },
   });
@@ -177,6 +216,12 @@ async function deleteProblem(problemId: number) {
       },
     }),
   ]);
+  await auditLog({
+    actor,
+    action: "PROBLEM_DELETED",
+    message: `Problem #${problemId} soft-deleted by admin`,
+    problemId,
+  });
 }
 
 const PRIORITIES = ["low", "medium", "high", "sos"] as const;
@@ -188,7 +233,7 @@ const assignSchema = z.object({
 });
 
 export async function assignProblem(formData: FormData): Promise<void> {
-  await requireRole("admin");
+  const session = await requireRole("admin");
 
   const parsed = assignSchema.safeParse({
     problemId: formData.get("problemId"),
@@ -226,6 +271,13 @@ export async function assignProblem(formData: FormData): Promise<void> {
     data: { priority, assigned_to: assignedTo, status: "assigned" },
   });
 
+  await auditLog({
+    actor: { id: session.userId, role: session.role },
+    action: "PROBLEM_ASSIGNED",
+    message: `Problem #${problemId} assigned to team #${assignedTo} (${priority})`,
+    problemId,
+  });
+
   revalidatePath("/admin/problems");
   revalidatePath("/admin/dashboard");
   flash("/admin/problems", "ok", "Problem assigned.");
@@ -245,7 +297,7 @@ const banSchema = z
   });
 
 export async function banUser(formData: FormData): Promise<void> {
-  await requireRole("admin");
+  const session = await requireRole("admin");
 
   const parsed = banSchema.safeParse({
     userId: formData.get("userId"),
@@ -265,6 +317,12 @@ export async function banUser(formData: FormData): Promise<void> {
   await db.users.update({
     where: { user_id: userId },
     data: { is_banned: true, ban_until: banUntil },
+  });
+
+  await auditLog({
+    actor: { id: session.userId, role: session.role },
+    action: "USER_BANNED",
+    message: `User #${userId} banned (${permanent ? "permanent" : `${banDays ?? 7} days`})`,
   });
 
   revalidatePath(back);
@@ -294,6 +352,12 @@ export async function sendWarning(formData: FormData): Promise<void> {
       admin_id: session.userId,
       message: parsed.data!.message,
     },
+  });
+
+  await auditLog({
+    actor: { id: session.userId, role: session.role },
+    action: "WARNING_SENT",
+    message: `Warning sent to user #${parsed.data!.userId}`,
   });
 
   revalidatePath(back);

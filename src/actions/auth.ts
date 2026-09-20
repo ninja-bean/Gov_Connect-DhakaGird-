@@ -3,10 +3,11 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { createSession, deleteSession } from "@/lib/auth/session";
+import { createSession, deleteSession, getSession } from "@/lib/auth/session";
 import { requireSession } from "@/lib/auth/guards";
-import { hashPassword, verifyPassword } from "@/lib/auth/password";
+import { hashPassword, passwordStrengthError, verifyPassword } from "@/lib/auth/password";
 import { homePathFor } from "@/lib/auth/routes";
+import { auditLog } from "@/lib/audit";
 import type { Role } from "@/lib/auth/session-core";
 import {
   fieldErrors,
@@ -30,7 +31,7 @@ const registerSchema = z
     email: z.email({ error: "Please enter a valid email." }).trim(),
     password: z
       .string()
-      .min(6, { error: "Password must be at least 6 characters long." }),
+      .min(1, { error: "Please choose a password." }),
     confirmPassword: z.string(),
   })
   .refine((v) => v.password === v.confirmPassword, {
@@ -55,21 +56,43 @@ export async function login(
 
   const user = await db.users.findUnique({ where: { email } });
   if (!user || !(await verifyPassword(password, user.password))) {
+    await auditLog({
+      actor: null,
+      action: "AUTH_LOGIN_FAILED",
+      message: `Failed login attempt for ${email}`,
+    });
     return { message: "Invalid login credentials." };
   }
 
+  const actor = { id: user.user_id, role: user.role };
+
   if (user.is_banned) {
+    await auditLog({
+      actor,
+      action: "AUTH_LOGIN_BLOCKED",
+      message: `Blocked login for banned account ${email}`,
+    });
     return { message: "Your account has been suspended." };
   }
 
   const role = user.role as Role;
   if (role === "response" && user.status !== "active") {
+    await auditLog({
+      actor,
+      action: "AUTH_LOGIN_BLOCKED",
+      message: `Blocked login for unapproved response team ${email}`,
+    });
     return {
       message: "Your Response Team account is still pending admin approval.",
     };
   }
 
   await createSession({ userId: user.user_id, role, name: user.name });
+  await auditLog({
+    actor,
+    action: "AUTH_LOGIN",
+    message: `${user.name} signed in as ${role}`,
+  });
   redirect(homePathFor(role));
 }
 
@@ -91,6 +114,11 @@ export async function register(
 
   const { role, name, email, password } = parsed.data;
 
+  const strength = passwordStrengthError(password);
+  if (strength) {
+    return { errors: { password: [strength] } };
+  }
+
   const existing = await db.users.findUnique({ where: { email } });
   if (existing) {
     return { message: "This email is already registered." };
@@ -100,7 +128,7 @@ export async function register(
     const hashed = await hashPassword(password);
 
     if (role === "user") {
-      await db.users.create({
+      const created = await db.users.create({
         data: {
           name,
           email,
@@ -113,17 +141,20 @@ export async function register(
           status: "active",
         },
       });
+      await auditLog({
+        actor: { id: created.user_id, role: "user" },
+        action: "AUTH_REGISTER",
+        message: `Citizen account registered (${email})`,
+      });
       await createSession({
-        userId: (
-          await db.users.findUniqueOrThrow({ where: { email } })
-        ).user_id,
+        userId: created.user_id,
         role: "user",
         name,
       });
       redirect(homePathFor("user"));
     }
 
-    await db.users.create({
+    const created = await db.users.create({
       data: {
         name,
         email,
@@ -140,6 +171,11 @@ export async function register(
         location: fieldOrNull(formData.get("location")),
         employee_number: fieldOrNull(formData.get("employeeNumber")),
       },
+    });
+    await auditLog({
+      actor: { id: created.user_id, role: "response" },
+      action: "AUTH_REGISTER",
+      message: `Response team registration submitted (${email})`,
     });
     return {
       message:
@@ -198,15 +234,33 @@ export async function changePassword(
     return { message: "Current password is incorrect." };
   }
 
+  const strength = passwordStrengthError(next);
+  if (strength) {
+    return { message: strength };
+  }
+
   await db.users.update({
     where: { user_id: session.userId },
     data: { password: await hashPassword(next) },
+  });
+  await auditLog({
+    actor: { id: session.userId, role: session.role },
+    action: "AUTH_PASSWORD_CHANGED",
+    message: "Password changed",
   });
 
   return { message: "Password updated successfully!" };
 }
 
 export async function logout(): Promise<void> {
+  const session = await getSession();
+  if (session) {
+    await auditLog({
+      actor: { id: session.userId, role: session.role },
+      action: "AUTH_LOGOUT",
+      message: `${session.name} signed out`,
+    });
+  }
   await deleteSession();
   redirect("/login");
 }

@@ -1,10 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { use } from "react";
 import LoginForm from "./login-form";
 
 export const metadata: Metadata = { title: "Login | GovConnect" };
 
-export default function LoginPage() {
+export default function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const sp = use(searchParams);
+  const flashMsg =
+    sp.flash === "err" && typeof sp.msg === "string" ? sp.msg : undefined;
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-10">
       <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
@@ -12,7 +21,7 @@ export default function LoginPage() {
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">Welcome back</h1>
           <p className="mt-1 text-sm text-slate-500">Sign in to GovConnect</p>
         </div>
-        <LoginForm />
+        <LoginForm initialFlash={flashMsg} />
         <p className="mt-6 text-center text-sm text-slate-500">
           Don&apos;t have an account?{" "}
           <Link href="/register" className="font-semibold text-blue-600 hover:underline">

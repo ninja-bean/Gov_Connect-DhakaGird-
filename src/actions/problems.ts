@@ -16,6 +16,7 @@ import {
   fieldErrors,
   type ActionState,
 } from "@/lib/action-state";
+import { auditLog } from "@/lib/audit";
 
 export type { ActionState };
 
@@ -88,7 +89,7 @@ export async function reportProblem(
     return { message: e instanceof Error ? e.message : "Media upload failed." };
   }
 
-  await db.problems.create({
+  const created = await db.problems.create({
     data: {
       user_id: session.userId,
       category,
@@ -102,6 +103,13 @@ export async function reportProblem(
       priority: "medium",
       media_path: media.length > 0 ? media.join(",") : null,
     },
+  });
+
+  await auditLog({
+    actor: { id: session.userId, role: session.role },
+    action: "REPORT_CREATED",
+    message: `Problem reported (${category})`,
+    problemId: created.problem_id,
   });
 
   return { message: "Report submitted successfully." };
@@ -139,13 +147,11 @@ export async function sosAlert(latitude: number, longitude: number): Promise<Sos
       },
     });
 
-    await db.logs.create({
-      data: {
-        problem_id: problem.problem_id,
-        user_id: session.userId,
-        notification_type: "SOS",
-        message: "Emergency SOS alert triggered",
-      },
+    await auditLog({
+      actor: { id: session.userId, role: session.role },
+      action: "SOS_TRIGGERED",
+      message: "Emergency SOS alert triggered",
+      problemId: problem.problem_id,
     });
 
     return { ok: true };
@@ -194,6 +200,12 @@ export async function submitFeedback(
       comment: comment || null,
     },
   });
+  await auditLog({
+    actor: { id: session.userId, role: session.role },
+    action: "FEEDBACK_SUBMITTED",
+    message: `Feedback (${rating}/5) for problem #${problemId}`,
+    problemId,
+  });
 
   return { message: "Thank you — your feedback has been recorded." };
 }
@@ -222,6 +234,11 @@ export async function submitUnbanAppeal(
       message,
       reason: message,
     },
+  });
+  await auditLog({
+    actor: { id: session.userId, role: session.role },
+    action: "UNBAN_APPEAL_SUBMITTED",
+    message: "Unban appeal submitted",
   });
 
   return { message: "Your unban request has been submitted for admin review." };

@@ -7,6 +7,7 @@ import { requireRole } from "@/lib/auth/guards";
 import { fieldErrors, type ActionState } from "@/lib/action-state";
 import { inDhaka } from "@/lib/problems";
 import { saveProfilePicture, PROFILE_PIC_MAX_BYTES } from "@/lib/uploads";
+import { auditLog } from "@/lib/audit";
 
 export type { ActionState };
 
@@ -92,6 +93,12 @@ export async function startWorking(
       data: { busy_members: newBusy },
     }),
   ]);
+  await auditLog({
+    actor: { id: session.userId, role: session.role },
+    action: "RESPONSE_STARTED",
+    message: `Team started working on problem #${problemId} with ${members} member(s)`,
+    problemId,
+  });
 
   revalidatePath("/response/dashboard");
   return { message: "Problem marked as in progress." };
@@ -141,6 +148,12 @@ export async function resolveProblem(
       data: { busy_members: newBusy },
     }),
   ]);
+  await auditLog({
+    actor: { id: session.userId, role: session.role },
+    action: "RESPONSE_RESOLVED",
+    message: `Problem #${problemId} resolved`,
+    problemId,
+  });
 
   revalidatePath("/response/dashboard");
   return { message: "Problem resolved successfully." };
@@ -201,6 +214,11 @@ export async function updateTeamProfile(
       longitude: data.longitude,
       ...(profilePic ? { profile_pic: profilePic } : {}),
     },
+  });
+  await auditLog({
+    actor: { id: session.userId, role: session.role },
+    action: "RESPONSE_PROFILE_UPDATED",
+    message: "Response team profile updated",
   });
 
   revalidatePath("/response/profile");
