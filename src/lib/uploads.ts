@@ -11,7 +11,7 @@ export const ALLOWED_IMAGE_TYPES = new Set([
 export const PROBLEM_MEDIA_MAX_BYTES = 10 * 1024 * 1024;
 export const PROFILE_PIC_MAX_BYTES = 2 * 1024 * 1024;
 
-async function saveFile(file: File, subdir: string, maxBytes: number): Promise<string> {
+async function saveFile(file: File, subdir: string): Promise<string> {
   const dir = path.join(process.cwd(), "public", "uploads", subdir);
   await mkdir(dir, { recursive: true });
   const ext = (file.name.split(".").pop() ?? "bin").toLowerCase();
@@ -30,7 +30,7 @@ export async function saveProblemMedia(files: File[]): Promise<string[]> {
     if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
       throw new Error(`"${file.name}" is not supported. Only JPG, PNG and WebP.`);
     }
-    names.push(await saveFile(file, "problems", PROBLEM_MEDIA_MAX_BYTES));
+    names.push(await saveFile(file, "problems"));
   }
   return names;
 }
@@ -44,5 +44,5 @@ export async function saveProfilePicture(
   if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
     throw new Error("Unsupported image format. Use JPG, PNG or WebP.");
   }
-  return saveFile(file, "profile_pics", PROFILE_PIC_MAX_BYTES);
+  return saveFile(file, "profile_pics");
 }

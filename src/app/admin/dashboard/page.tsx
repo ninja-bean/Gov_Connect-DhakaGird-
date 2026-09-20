@@ -20,7 +20,7 @@ export default async function AdminDashboard({
   const session = await requireRole("admin");
   const sp = await searchParams;
 
-  const [problems, teams, appeals, bannedUsers] = await Promise.all([
+  const [problems, teams, bannedUsers] = await Promise.all([
     db.problems.findMany({
       where: { deleted_by_admin: false },
       select: {
@@ -38,10 +38,6 @@ export default async function AdminDashboard({
     db.users.findMany({
       where: { role: "response" },
       select: { user_id: true, status: true },
-    }),
-    db.unban_requests.findMany({
-      where: { status: "pending" },
-      select: { id: true },
     }),
     db.users.count({ where: { is_banned: true } }),
   ]);

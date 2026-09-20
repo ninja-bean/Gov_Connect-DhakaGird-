@@ -30,6 +30,16 @@ const TICKER_FALLBACK = [
   "🌧️ Check weather updates before travel.",
 ];
 
+async function countActiveSos(sinceHours: number): Promise<number> {
+  return db.problems.count({
+    where: {
+      category: SOS_CATEGORY,
+      status: "pending",
+      created_at: { gte: new Date(Date.now() - sinceHours * 60 * 60 * 1000) },
+    },
+  });
+}
+
 export const metadata: Metadata = { title: "Dashboard | GovConnect" };
 
 export default async function CitizenDashboard() {
@@ -71,13 +81,7 @@ export default async function CitizenDashboard() {
         take: 8,
       }),
       db.problems.count({ where: { status: "pending" } }),
-      db.problems.count({
-        where: {
-          category: SOS_CATEGORY,
-          status: "pending",
-          created_at: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
-        },
-      }),
+      countActiveSos(24),
     ]);
 
   const total = reports.length;

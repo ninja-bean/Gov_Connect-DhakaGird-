@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { decrypt } from "@/lib/auth/session-core";
 import { homePathFor } from "@/lib/auth/routes";
 
