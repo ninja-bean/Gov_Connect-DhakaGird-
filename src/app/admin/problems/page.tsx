@@ -246,6 +246,14 @@ export default async function AdminProblemsPage({
           <PageHeader
             title="Problem Management"
             description="Verify reports, assign them to teams, and archive complaints."
+            action={
+              <a
+                href="/api/admin/export/problems"
+                className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+              >
+                ⬇️ Download CSV
+              </a>
+            }
           />
           <FlashBanner ok={sp.flash === "ok" ? sp.msg : undefined} err={sp.flash === "err" ? sp.msg : undefined} />
 
